@@ -17,13 +17,19 @@ each dbt run.
 
 ## Requirements
 
-It is recommended to use a Python virtual environment. Create one and
-install the required packages from `requirements.txt`:
+Dependencies are managed with [Poetry](https://python-poetry.org/). Create a
+virtual environment (Poetry will do this automatically) and install the
+dependencies:
 
 ```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+pip install poetry  # if Poetry is not installed
+poetry install
+```
+
+To run commands within the virtual environment use `poetry run`:
+
+```bash
+poetry run python orchestrator.py
 ```
 
 ## Running the pipeline
@@ -31,7 +37,7 @@ pip install -r requirements.txt
 1. Initialize the database by running the orchestrator locally:
 
 ```bash
-python orchestrator.py
+poetry run python orchestrator.py
 ```
 
 Alternatively build and start the Docker container. The `data/` folder is
