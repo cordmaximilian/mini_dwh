@@ -1,0 +1,4 @@
+duckdb
+schedule
+dbt-core
+dbt-duckdb
