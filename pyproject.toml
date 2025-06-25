@@ -12,6 +12,8 @@ schedule = "*"
 dbt-core = "*"
 dbt-duckdb = "*"
 prefect = "*"
+pandas = "*"
+yfinance = "*"
 
 [tool.poetry.group.dev.dependencies]
 # Add dev dependencies here

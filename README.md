@@ -19,7 +19,8 @@ each dbt run.
 
 Dependencies are managed with [Poetry](https://python-poetry.org/). Create a
 virtual environment (Poetry will do this automatically) and install the
-dependencies:
+dependencies (including `pandas` and `yfinance` used to fetch commodity
+prices):
 
 ```bash
 pip install poetry  # if Poetry is not installed
