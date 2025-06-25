@@ -16,18 +16,28 @@ data pipeline on a daily schedule.
 
 ## Requirements
 
-Install dependencies with pip:
+It is recommended to use a Python virtual environment. Create one and
+install the required packages from `requirements.txt`:
 
 ```bash
-pip install duckdb dbt-core schedule
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 ## Running the pipeline
 
-1. Initialize the database by running the orchestrator:
+1. Initialize the database by running the orchestrator locally:
 
 ```bash
 python orchestrator.py
+```
+
+Alternatively build and start the Docker container. The `data/` folder is
+mounted so the DuckDB file is accessible on the host:
+
+```bash
+docker compose up --build
 ```
 
 The script runs `dbt seed`, `dbt run` and `dbt test` once and then

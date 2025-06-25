@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  dwh:
+    build: .
+    volumes:
+      - ./data:/app/data
+    command: python orchestrator.py
