@@ -51,6 +51,26 @@ The script runs `dbt seed`, `dbt run` and `dbt test` once and then
 schedules the same sequence to run every hour. Before each run it
 downloads the latest commodity prices.
 
+## Pipeline monitoring with Prefect
+
+The project includes an optional Prefect flow in `prefect_flow.py` so you
+can monitor pipeline runs using Prefect's UI.
+
+Start the local Prefect server in one terminal:
+
+```bash
+poetry run prefect orion start
+```
+
+Then execute the flow in another terminal:
+
+```bash
+poetry run python prefect_flow.py
+```
+
+The Prefect UI, available at `http://127.0.0.1:4200`, shows the status of
+each run so you can keep track of your pipeline executions.
+
 ## dbt configuration
 
 The dbt profile in `mini_dwh_dbt/profiles.yml` points to
