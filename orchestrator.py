@@ -2,6 +2,8 @@ import subprocess
 import schedule
 import time
 
+from fetch_commodity_prices import fetch_commodity_prices
+
 
 def run_dbt_pipeline():
     """Run dbt commands for the full pipeline."""
@@ -10,10 +12,16 @@ def run_dbt_pipeline():
     subprocess.run(["dbt", "test"], check=True)
 
 
-def main():
-    schedule.every().day.at("00:00").do(run_dbt_pipeline)
-    print("Starting orchestration loop. Press Ctrl+C to stop.")
+def run_full_pipeline():
+    """Fetch commodity data and run the dbt pipeline."""
+    fetch_commodity_prices()
     run_dbt_pipeline()
+
+
+def main():
+    schedule.every().hour.do(run_full_pipeline)
+    print("Starting orchestration loop. Press Ctrl+C to stop.")
+    run_full_pipeline()
     while True:
         schedule.run_pending()
         time.sleep(60)

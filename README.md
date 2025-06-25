@@ -3,15 +3,16 @@
 This repository contains a minimal example of a data warehouse using
 [DuckDB](https://duckdb.org/) with transformation models managed by
 [dbt](https://www.getdbt.com/). An example orchestration script runs the
-data pipeline on a daily schedule.
+data pipeline on an hourly schedule and fetches commodity prices before
+each dbt run.
 
 ## Project structure
 
 - `mini_dwh_dbt/` - dbt project containing models for bronze, silver and
   gold layers.
 - `mini_dwh_dbt/seeds/raw/` - example CSV datasets loaded as seeds.
-- `orchestrator.py` - simple scheduler that executes the dbt pipeline
-  every day.
+- `orchestrator.py` - scheduler that fetches commodity prices and runs
+  the dbt pipeline every hour.
 - `data/warehouse.duckdb` - DuckDB file created when the pipeline runs.
 
 ## Requirements
@@ -41,7 +42,8 @@ docker compose up --build
 ```
 
 The script runs `dbt seed`, `dbt run` and `dbt test` once and then
-schedules the same sequence to run daily at midnight.
+schedules the same sequence to run every hour. Before each run it
+downloads the latest commodity prices.
 
 ## dbt configuration
 

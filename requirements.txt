@@ -2,3 +2,5 @@ duckdb
 schedule
 dbt-core
 dbt-duckdb
+pandas
+yfinance
