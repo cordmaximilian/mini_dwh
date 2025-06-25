@@ -10,6 +10,7 @@ duckdb = "*"
 schedule = "*"
 dbt-core = "*"
 dbt-duckdb = "*"
+prefect = "*"
 
 [tool.poetry.group.dev.dependencies]
 # Add dev dependencies here

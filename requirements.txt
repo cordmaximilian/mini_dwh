@@ -5,3 +5,4 @@ dbt-core
 dbt-duckdb
 pandas
 yfinance
+prefect
