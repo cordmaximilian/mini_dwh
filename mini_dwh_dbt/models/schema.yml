@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: orders_bronze
+    description: 'Raw orders data from seed'
+  - name: users_bronze
+    description: 'Raw users data from seed'
+  - name: orders_enriched
+    description: 'Orders joined with users'
+  - name: sales_by_country
+    description: 'Aggregated sales by country'
