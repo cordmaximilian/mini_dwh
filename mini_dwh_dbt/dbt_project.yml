@@ -1,0 +1,19 @@
+name: 'mini_dwh'
+version: '1.0'
+config-version: 2
+
+profile: 'mini_dwh'
+
+model-paths: ['models']
+seed-paths: ['seeds']
+
+target-path: 'target'
+
+models:
+  mini_dwh:
+    bronze:
+      materialized: table
+    silver:
+      materialized: table
+    gold:
+      materialized: table
