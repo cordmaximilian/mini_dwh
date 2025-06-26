@@ -25,27 +25,29 @@ services:
       S3_ENDPOINT: http://minio:9000
       S3_BUCKET: warehouse
 
-  helm_db:
+  superset_db:
     image: postgres:13
     environment:
-      POSTGRES_USER: helm
-      POSTGRES_PASSWORD: helm
-      POSTGRES_DB: helm
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+      POSTGRES_DB: superset
     volumes:
-      - helm_db:/var/lib/postgresql/data
+      - superset_db:/var/lib/postgresql/data
 
-  helm:
-    image: helm/helm:latest
+  superset_cache:
+    image: redis:latest
+
+  superset:
+    image: apache/superset:latest
     depends_on:
-      - helm_db
+      - superset_db
+      - superset_cache
     environment:
-      PGHOST: helm_db
-      PGPORT: 5432
-      PGUSER: helm
-      PGPASSWORD: helm
-      PGDATABASE: helm
+      SUPERSET_SECRET_KEY: superset-secret
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://superset:superset@superset_db:5432/superset
+      REDIS_HOST: superset_cache
     ports:
-        - "8080:8080"
+      - "8080:8088"
 
   docs:
     build: .
@@ -60,5 +62,6 @@ services:
       DBT_PROFILES_DIR: /app/dbt
 
 volumes:
-  helm_db:
+  superset_db:
   minio_data:
+  superset_cache:
