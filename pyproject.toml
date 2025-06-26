@@ -9,6 +9,7 @@ package-mode = false
 python = "^3.11"
 duckdb = "*"
 dagster = "*"
+dagster-webserver = "*"
 dbt-core = "*"
 dbt-duckdb = "*"
 pandas = "*"
