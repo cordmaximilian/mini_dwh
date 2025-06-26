@@ -10,6 +10,33 @@ services:
     environment:
       DBT_PROFILES_DIR: /app/dbt
 
+  lightdash_db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: lightdash
+      POSTGRES_PASSWORD: lightdash
+      POSTGRES_DB: lightdash
+    volumes:
+      - lightdash_db:/var/lib/postgresql/data
+
+  lightdash:
+    image: lightdash/lightdash:latest
+    depends_on:
+      - lightdash_db
+    volumes:
+      - ./dbt:/usr/app/dbt
+      - ./data:/usr/app/data
+    environment:
+      LIGHTDASH_SECRET: supersecret
+      PGHOST: lightdash_db
+      PGPORT: 5432
+      PGUSER: lightdash
+      PGPASSWORD: lightdash
+      PGDATABASE: lightdash
+      DBT_PROJECT_DIR: /usr/app/dbt
+    ports:
+      - "8080:8080"
+
   docs:
     build: .
     working_dir: /app/dbt
@@ -21,3 +48,6 @@ services:
       - "8081:8081"
     environment:
       DBT_PROFILES_DIR: /app/dbt
+
+volumes:
+  lightdash_db:

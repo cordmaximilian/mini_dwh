@@ -27,6 +27,7 @@ dbt for transformations and Dagster for orchestration.
 5. Access the running services:
    - Dagster UI: <http://localhost:3000>
    - dbt docs: <http://localhost:8081>
+   - Lightdash: <http://localhost:8080>
 
 The warehouse database is stored in `data/warehouse.duckdb`. Raw CSV files are
 written to `../external_data`. Open the database in
@@ -127,8 +128,14 @@ If no run configuration is supplied, the job falls back to the values defined in
   - `sources/weather.py` fetches hourly temperature observations.
   - `sources/stocks.py` retrieves daily stock prices for a few tickers.
   - `sources/exchange_rates.py` stores current USD exchange rates.
-  - `sources/weather_forecast.py` downloads a 7‑day weather forecast.
-  - `sources/world_bank.py` collects GDP data from the World Bank API.
+- `sources/weather_forecast.py` downloads a 7‑day weather forecast.
+- `sources/world_bank.py` collects GDP data from the World Bank API.
+
+## Data visualization with Lightdash
+
+Lightdash reads the dbt project and lets you define metrics and dashboards as
+YAML files alongside your models. The service runs on <http://localhost:8080>.
+Create an account when prompted and start exploring the warehouse.
 
 Start the stack with Docker, modify dbt models and watch the pipeline run!
 
