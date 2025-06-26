@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 
 import yaml
-from dagster import Definitions, ScheduleDefinition, job, op, Field
+from dagster import Definitions, ScheduleDefinition, job, op, Field, Noneable
 
 DBT_DIR = Path(__file__).parent / "dbt"
 CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
@@ -36,7 +36,7 @@ def fetch_data(context) -> bool:
 
 
 @op(
-    config_schema={"models": Field([str], is_required=False, default_value=None)}
+    config_schema={"models": Field(Noneable([str]), is_required=False, default_value=None)}
 )
 def run_dbt_pipeline(context, _start: bool) -> None:
     """Run dbt for the configured models."""
