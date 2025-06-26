@@ -1,6 +1,6 @@
 sources:
   - name: commodities
-    fetcher: fetch_commodity_prices.fetch_commodity_prices
+    fetcher: sources.commodities.fetch
     schedule: "hourly"
     models:
       - orders_enriched

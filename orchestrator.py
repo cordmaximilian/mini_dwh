@@ -3,7 +3,7 @@ import subprocess
 import schedule
 import time
 
-from fetch_commodity_prices import fetch_commodity_prices
+from sources.commodities import fetch as fetch_commodities
 
 
 from pathlib import Path
@@ -23,7 +23,7 @@ def run_dbt_pipeline():
 
 def run_full_pipeline():
     """Fetch commodity data and run the dbt pipeline."""
-    fetch_commodity_prices()
+    fetch_commodities()
     run_dbt_pipeline()
 
 
