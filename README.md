@@ -18,7 +18,7 @@ function is executed for that source.
   executes each source on its defined schedule.
 - `mini_dwh_dbt/` is used as the working directory for all dbt commands
   executed by the orchestrator and Prefect flow.
-- `data/warehouse.duckdb` - DuckDB file created when the pipeline runs.
+- `mini_dwh_dbt/data/warehouse.duckdb` - DuckDB file created when the pipeline runs.
 
 ## Configuration
 
@@ -71,6 +71,7 @@ make sure the CLI is executed in the `mini_dwh_dbt/` directory so that the
 
 ```bash
 cd mini_dwh_dbt
+mkdir -p data  # create the DuckDB directory if it doesn't exist
 dbt run -s models/bronze/orders_bronze.sql
 ```
 
@@ -167,7 +168,7 @@ poetry run python register_model.py my_model --activate
 ## dbt configuration
 
 The dbt profile in `mini_dwh_dbt/profiles.yml` points to
-`data/warehouse.duckdb`. The orchestrator automatically sets
+`mini_dwh_dbt/data/warehouse.duckdb`. The orchestrator automatically sets
 `DBT_PROFILES_DIR` to use this profile. You can override the database path by
 setting the `DUCKDB_PATH` environment variable.
 
