@@ -5,3 +5,8 @@ services:
     volumes:
       - ./data:/app/data
     command: python orchestrator.py
+
+  webui:
+    image: ghcr.io/duckdb/duckdb-wasm-shell:latest
+    ports:
+      - "8080:8080"
