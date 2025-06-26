@@ -138,6 +138,11 @@ Lightdash reads the dbt project and lets you define metrics and dashboards as
 YAML files alongside your models. The service runs on <http://localhost:8080>.
 Create an account when prompted and start exploring the warehouse.
 
+The `docker-compose.yml` file enables a built-in S3 mock so no external S3
+configuration is required. If you upgrade Lightdash and encounter an error about
+missing S3 settings, ensure that the `S3_MOCK` environment variable is set to
+`"true"` for the Lightdash service.
+
 Start the stack with Docker, modify dbt models and watch the pipeline run!
 
 ## Database cleanup
