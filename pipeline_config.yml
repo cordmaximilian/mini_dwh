@@ -1,3 +1,9 @@
+models:
+  - name: orders_enriched
+    active: true
+  - name: sales_by_country
+    active: true
+
 sources:
   - name: commodities
     fetcher: sources.commodities.fetch
