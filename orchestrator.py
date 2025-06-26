@@ -20,6 +20,15 @@ CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
 # Ensure dbt uses the project-specific profile rather than the default
 os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
 
+# Ensure the DuckDB directory exists before running dbt
+def _ensure_duckdb_dir() -> None:
+    """Create the parent directory for the DuckDB file if needed."""
+    path = os.environ.get("DUCKDB_PATH")
+    if path:
+        dir_path = Path(path).expanduser().parent
+    else:
+        dir_path = DBT_DIR / "data"
+    dir_path.mkdir(parents=True, exist_ok=True)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -27,6 +36,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 def run_dbt_pipeline(models: list[str]) -> None:
     """Run dbt commands for the selected models."""
     logging.info("Running dbt models: %s", ", ".join(models))
+    _ensure_duckdb_dir()
     subprocess.run(["dbt", "seed"], check=True, cwd=DBT_DIR)
     if models:
         subprocess.run(["dbt", "run", "-s", *models], check=True, cwd=DBT_DIR)
