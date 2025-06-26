@@ -1,6 +1,14 @@
 models:
   - name: wheat_weather
     active: true
+  - name: commodity_prices_daily
+    active: true
+  - name: daily_weather
+    active: true
+  - name: commodity_price_signals
+    active: true
+  - name: agri_buy_signals
+    active: true
 
 sources:
   - name: commodities
@@ -8,11 +16,16 @@ sources:
     schedule: "hourly"
     models:
       - wheat_weather
+      - commodity_prices_daily
+      - commodity_price_signals
+      - agri_buy_signals
   - name: weather
     fetcher: sources.weather.fetch
     schedule: "hourly"
     models:
       - wheat_weather
+      - daily_weather
+      - agri_buy_signals
   - name: stocks
     fetcher: sources.stocks.fetch
     schedule: "daily"
