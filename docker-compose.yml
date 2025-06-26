@@ -38,8 +38,15 @@ services:
       # configuration. This prevents the runtime error about missing S3
       # settings when starting the Lightdash container.
       S3_MOCK: "true"
+      # Provide explicit S3 parameters to satisfy newer Lightdash versions
+      # that require these variables even when using the built-in mock.
+      S3_ENDPOINT: http://localhost:9000
+      S3_BUCKET: lightdash
+      S3_REGION: us-east-1
+      S3_ACCESS_KEY_ID: minio
+      S3_SECRET_ACCESS_KEY: minio123
     ports:
-      - "8080:8080"
+        - "8080:8080"
 
   docs:
     build: .
