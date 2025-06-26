@@ -12,7 +12,8 @@ services:
 
   docs:
     build: .
-    command: bash -c "dbt docs generate --project-dir mini_dwh_dbt && dbt docs serve --port 8081 --address 0.0.0.0"
+    working_dir: /app/mini_dwh_dbt
+    command: bash -c "dbt docs generate && dbt docs serve --port 8081 --address 0.0.0.0"
     volumes:
       - ./data:/app/data
     ports:
