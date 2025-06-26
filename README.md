@@ -13,6 +13,8 @@ each dbt run.
 - `mini_dwh_dbt/seeds/raw/` - example CSV datasets loaded as seeds.
 - `orchestrator.py` - scheduler that fetches commodity prices and runs
   the dbt pipeline every hour.
+- `mini_dwh_dbt/` is used as the working directory for all dbt commands
+  executed by the orchestrator and Prefect flow.
 - `data/warehouse.duckdb` - DuckDB file created when the pipeline runs.
 
 ## Requirements

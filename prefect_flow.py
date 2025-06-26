@@ -2,6 +2,9 @@ from prefect import task, flow
 import subprocess
 
 from fetch_commodity_prices import fetch_commodity_prices
+from pathlib import Path
+
+DBT_DIR = Path(__file__).parent / "mini_dwh_dbt"
 
 
 @task
@@ -13,9 +16,9 @@ def fetch_data():
 @task
 def run_dbt_pipeline():
     """Execute the dbt commands for the full pipeline."""
-    subprocess.run(["dbt", "seed"], check=True)
-    subprocess.run(["dbt", "run"], check=True)
-    subprocess.run(["dbt", "test"], check=True)
+    subprocess.run(["dbt", "seed"], check=True, cwd=DBT_DIR)
+    subprocess.run(["dbt", "run"], check=True, cwd=DBT_DIR)
+    subprocess.run(["dbt", "test"], check=True, cwd=DBT_DIR)
 
 
 @flow
