@@ -13,3 +13,19 @@ sources:
     schedule: "hourly"
     models:
       - wheat_weather
+  - name: stocks
+    fetcher: sources.stocks.fetch
+    schedule: "daily"
+    models: []
+  - name: exchange_rates
+    fetcher: sources.exchange_rates.fetch
+    schedule: "daily"
+    models: []
+  - name: weather_forecast
+    fetcher: sources.weather_forecast.fetch
+    schedule: "daily"
+    models: []
+  - name: world_bank_gdp
+    fetcher: sources.world_bank.fetch
+    schedule: "daily"
+    models: []
