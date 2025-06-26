@@ -10,11 +10,6 @@ services:
     environment:
       DBT_PROFILES_DIR: /app/mini_dwh_dbt
 
-  webui:
-    image: ghcr.io/duckdb/duckdb-wasm-shell:latest
-    ports:
-      - "8080:8080"
-
   docs:
     build: .
     command: bash -c "dbt docs generate && dbt docs serve --port 8081 --address 0.0.0.0"
