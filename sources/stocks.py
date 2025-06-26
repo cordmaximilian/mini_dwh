@@ -1,12 +1,16 @@
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from . import EXTERNAL_DATA_DIR
-
 import pandas as pd
 import yfinance as yf
 
-DATA_PATH = EXTERNAL_DATA_DIR / "stock_prices.csv"
+DATA_PATH = (
+    Path(__file__).resolve().parent.parent
+    / "dbt"
+    / "seeds"
+    / "external"
+    / "stock_prices.csv"
+)
 
 
 def fetch() -> None:

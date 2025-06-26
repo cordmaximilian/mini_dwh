@@ -12,32 +12,21 @@ dbt for transformations and Dagster for orchestration.
    poetry lock
    ```
 
-3. Create a directory for raw CSV files next to the project:
+3. Build and run the stack:
 
-   ```bash
-   mkdir ../external_data
-   ```
-
-4. Fetch some sample data for the demo:
-
-   ```bash
-   poetry run python -m sources.commodities
-   poetry run python -m sources.weather
-   ```
-
-5. Build and run the stack:
 
    ```bash
    docker compose up --build
    ```
 
-6. Access the running services:
+4. Access the running services:
+
    - Dagster UI: <http://localhost:3000>
    - dbt docs: <http://localhost:8081>
    - Lightdash: <http://localhost:8080>
 
 The warehouse database is stored in `data/warehouse.duckdb`. Raw CSV files are
-written to `../external_data`. Open the database in
+written to `dbt/seeds/external`. Open the database in
 [DBeaver](https://dbeaver.io/) to explore tables created by dbt. Several sample
 sources are included: hourly commodity prices from Yahoo Finance and hourly
 weather data from the Open‑Meteo API. Additional fetchers provide stock prices,
@@ -52,7 +41,7 @@ The typical workflow when extending the warehouse is:
 
 1. **Pull raw data**
    - Implement a new module under `sources/` exposing a `fetch()` function.
-   - Run the fetcher directly to download data into `../external_data`:
+  - Run the fetcher directly to download data into `dbt/seeds/external`:
 
      ```bash
      poetry run python -m sources.your_source
@@ -131,7 +120,7 @@ If no run configuration is supplied, the job falls back to the values defined in
 - `run_pipeline.py` – helper script to fetch data and run dbt once.
 - `sources/` – Python modules for fetching raw data.
 - `dbt/` – dbt project containing models and configuration.
-  - Raw CSV files are stored one level above the project in `../external_data`.
+  - Raw CSV files are stored under `dbt/seeds/external`.
   - `sources/commodities.py` downloads futures prices for wheat, corn,
     soybeans, crude oil and a fertilizer index.
   - `sources/weather.py` fetches hourly temperature observations.
