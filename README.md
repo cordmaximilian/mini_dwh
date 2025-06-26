@@ -19,6 +19,10 @@ dbt for transformations and Dagster for orchestration.
    docker compose up --build
    ```
 
+   Sample seed files are included under `dbt/seeds/external` so the docs and
+   Lightdash containers can start without fetching data. Run the fetcher scripts
+   described below to refresh these CSVs with real data.
+
 4. Access the running services:
 
    - Dagster UI: <http://localhost:3000>
