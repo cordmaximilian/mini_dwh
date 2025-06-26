@@ -20,14 +20,14 @@ dbt for transformations and Dagster for orchestration.
    ```
 
    Sample seed files are included under `dbt/seeds/external` so the docs and
-   Helm containers can start without fetching data. Run the fetcher scripts
+   Superset containers can start without fetching data. Run the fetcher scripts
    described below to refresh these CSVs with real data.
 
 4. Access the running services:
 
    - Dagster UI: <http://localhost:3000>
    - dbt docs: <http://localhost:8081>
-   - Helm: <http://localhost:8080>
+   - Superset: <http://localhost:8080>
 
 The warehouse database is stored in `data/warehouse.duckdb`. Raw CSV files are
 uploaded to a Minio S3 bucket named `warehouse`. Open the database in
@@ -134,13 +134,13 @@ If no run configuration is supplied, the job falls back to the values defined in
 - `sources/weather_forecast.py` downloads a 7‑day weather forecast.
 - `sources/world_bank.py` collects GDP data from the World Bank API.
 
-## Data visualization with Helm
+## Data visualization with Superset
 
-Helm provides a Redash-based interface for exploring your data. The service
+Superset provides an intuitive interface for exploring your data. The service
 runs on <http://localhost:8080>. Create an account when prompted and start
 exploring the warehouse.
 
-CSV files and Helm assets are stored in a Minio object store included in the
+CSV files and Superset assets are stored in a Minio object store included in the
 Docker stack. Access the Minio console at <http://localhost:9001> using
 ``minio`` / ``minio123``.
 
