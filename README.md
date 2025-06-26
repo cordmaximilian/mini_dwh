@@ -84,10 +84,13 @@ container. This spins up the orchestrator which loads
 docker compose up --build
 ```
 
-The service mounts the `data/` directory so the DuckDB file is available on
-the host. The orchestrator sets `DBT_PROFILES_DIR` automatically so dbt uses
-the bundled profile. Once the container is running you can open a shell inside it if
-you want to execute additional `dbt` commands or inspect the database:
+The Compose stack exposes two services: the orchestrator container and a
+DuckDB-Wasm Web UI reachable on `http://localhost:8080`. The service mounts
+the `data/` directory so the DuckDB file is available on the host. The
+orchestrator sets `DBT_PROFILES_DIR` automatically so dbt uses the bundled
+profile. Once the containers are running you can open a shell inside the DWH
+service if you want to execute additional `dbt` commands or inspect the
+database:
 
 ```bash
 docker compose exec dwh bash
@@ -129,6 +132,14 @@ poetry run prefect agent start -q default
 
 The Prefect UI, available at `http://127.0.0.1:4200`, shows the status of
 each run so you can keep track of your pipeline executions.
+
+## DuckDB-Wasm Web UI
+
+Docker Compose also starts a small service that hosts the official
+DuckDB-Wasm Web UI. Once the stack is running open
+`http://localhost:8080` in your browser. Use the **Open** button in the UI
+to load `data/warehouse.duckdb` from the repository and explore the
+database interactively.
 
 ## Adding new data sources
 
