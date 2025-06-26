@@ -23,11 +23,13 @@ dbt for transformations and Dagster for orchestration.
    - dbt docs: <http://localhost:8081>
 
 The warehouse database is stored in `data/warehouse.duckdb`. Open this file in
-[DBeaver](https://dbeaver.io/) to explore tables created by dbt. Two sample
+[DBeaver](https://dbeaver.io/) to explore tables created by dbt. Several sample
 sources are included: hourly commodity prices from Yahoo Finance and hourly
-weather data from the Open‑Meteo API. Commodity prices cover wheat, corn,
-soybeans, crude oil and a placeholder fertilizer index. The `wheat_weather`
-model joins these datasets.
+weather data from the Open‑Meteo API. Additional fetchers provide stock prices,
+currency exchange rates, short‑term weather forecasts and GDP figures from the
+World Bank. Commodity prices cover wheat, corn, soybeans, crude oil and a
+placeholder fertilizer index. The `wheat_weather` model joins the commodity and
+weather observations.
 
 ## Editing models
 
@@ -68,5 +70,9 @@ If no run configuration is supplied, the job falls back to the values defined in
   - `sources/commodities.py` downloads futures prices for wheat, corn,
     soybeans, crude oil and a fertilizer index.
   - `sources/weather.py` fetches hourly temperature observations.
+  - `sources/stocks.py` retrieves daily stock prices for a few tickers.
+  - `sources/exchange_rates.py` stores current USD exchange rates.
+  - `sources/weather_forecast.py` downloads a 7‑day weather forecast.
+  - `sources/world_bank.py` collects GDP data from the World Bank API.
 
 Start the stack with Docker, modify dbt models and watch the pipeline run!
