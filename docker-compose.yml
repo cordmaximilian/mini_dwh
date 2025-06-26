@@ -4,7 +4,7 @@ services:
     build: .
     volumes:
       - ./data:/app/data
-    command: python orchestrator.py
+    command: dagster dev -m dagster_pipeline --host 0.0.0.0
 
   webui:
     image: ghcr.io/duckdb/duckdb-wasm-shell:latest

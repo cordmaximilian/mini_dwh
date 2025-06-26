@@ -2,7 +2,7 @@
 
 This repository contains a minimal example of a data warehouse using
 [DuckDB](https://duckdb.org/) with transformation models managed by
-[dbt](https://www.getdbt.com/). An orchestration script reads
+[dbt](https://www.getdbt.com/). A Dagster pipeline reads
 `pipeline_config.yml` at startup and schedules each data source
 individually. Before running the selected dbt models the configured fetch
 function is executed for that source.
@@ -14,10 +14,10 @@ function is executed for that source.
 - `sources/` - Python modules that download external datasets. Each module
   implements a `fetch()` function.
 - `mini_dwh_dbt/seeds/raw/` - example CSV datasets loaded as seeds.
-- `orchestrator.py` - scheduler that loads `pipeline_config.yml` and
-  executes each source on its defined schedule.
+- `dagster_pipeline.py` - defines the Dagster job and schedules based on
+  `pipeline_config.yml`.
 - `mini_dwh_dbt/` is used as the working directory for all dbt commands
-  executed by the orchestrator and Prefect flow.
+  executed by Dagster.
 - `mini_dwh_dbt/data/warehouse.duckdb` - DuckDB file created when the pipeline runs.
 
 ## Configuration
@@ -60,12 +60,12 @@ To run commands within the virtual environment use `poetry run`:
 
 
 ```bash
-poetry run python orchestrator.py
+poetry run dagster dev -m dagster_pipeline
 ```
 
 ## Running dbt commands manually
 
-When invoking `dbt` yourself (outside of the orchestrator or Prefect flow)
+When invoking `dbt` yourself (outside of Dagster)
 make sure the CLI is executed in the `mini_dwh_dbt/` directory so that the
 `dbt_project.yml` file is discovered. For example, to run a single model:
 
@@ -78,18 +78,18 @@ dbt run -s models/bronze/orders_bronze.sql
 ## Running the pipeline
 
 The simplest way to get started is to build and start the Docker
-container. This spins up the orchestrator which loads
+container. This spins up Dagster which loads
 `pipeline_config.yml` and schedules the configured sources immediately:
 
 ```bash
 docker compose up --build
 ```
 
-The Compose stack exposes two services: the orchestrator container and a
+The Compose stack exposes two services: the Dagster container and a
 DuckDB-Wasm Web UI reachable on `http://localhost:8080`. The service mounts
-the `data/` directory so the DuckDB file is available on the host. The
-orchestrator sets `DBT_PROFILES_DIR` automatically so dbt uses the bundled
-profile. Once the containers are running you can open a shell inside the DWH
+the `data/` directory so the DuckDB file is available on the host. Dagster
+sets `DBT_PROFILES_DIR` automatically so dbt uses the bundled profile. Once
+the containers are running you can open a shell inside the DWH
 service if you want to execute additional `dbt` commands or inspect the
 database:
 
@@ -99,43 +99,17 @@ docker compose exec dwh bash
 
 Running the container executes each source once and then continues to run
 them based on the schedule defined in `pipeline_config.yml`.
-Errors during fetching or model execution are logged. The orchestrator
-continues scheduling other runs so the container stays alive even if a
+Errors during fetching or model execution are logged. Dagster continues
+scheduling other runs so the container stays alive even if a
 step fails.
 
-If you prefer running everything locally, execute the orchestrator with
-Poetry instead:
+If you prefer running everything locally, execute Dagster with Poetry
+instead:
 
 ```bash
-poetry run python orchestrator.py
+poetry run dagster dev -m dagster_pipeline
 ```
 
-## Pipeline monitoring with Prefect
-
-The project includes an optional Prefect flow in `prefect_flow.py` so you
-can monitor pipeline runs using Prefect's UI. Deployments are created from
-`pipeline_config.yml` using `register_deployments.py`.
-
-Start the local Prefect server in one terminal:
-
-```bash
-poetry run prefect orion start
-```
-
-Register the deployments in another terminal:
-
-```bash
-poetry run python register_deployments.py
-```
-
-Finally, start a worker to execute scheduled runs:
-
-```bash
-poetry run prefect agent start -q default
-```
-
-The Prefect UI, available at `http://127.0.0.1:4200`, shows the status of
-each run so you can keep track of your pipeline executions.
 
 ## DuckDB-Wasm Web UI
 
@@ -183,7 +157,7 @@ poetry run python register_model.py my_model --activate
 ## dbt configuration
 
 The dbt profile in `mini_dwh_dbt/profiles.yml` points to
-`mini_dwh_dbt/data/warehouse.duckdb`. The orchestrator automatically sets
+`mini_dwh_dbt/data/warehouse.duckdb`. Dagster automatically sets
 `DBT_PROFILES_DIR` to use this profile. You can override the database path by
 setting the `DUCKDB_PATH` environment variable.
 
