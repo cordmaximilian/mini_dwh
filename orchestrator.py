@@ -35,18 +35,23 @@ def run_dbt_pipeline(models: list[str]) -> None:
         subprocess.run(["dbt", "test"], check=True, cwd=DBT_DIR)
 
 
-def load_config() -> list[dict]:
+def load_config() -> dict:
     """Load pipeline configuration from ``pipeline_config.yml``."""
     with open(CONFIG_FILE) as f:
-        data = yaml.safe_load(f) or {}
-    return data.get("sources", [])
+        return yaml.safe_load(f) or {}
 
 
-def schedule_source(source: dict) -> None:
+def active_models(cfg: dict) -> set[str]:
+    """Return the names of active dbt models from the config."""
+    models = cfg.get("models", [])
+    return {m["name"] for m in models if m.get("active")}
+
+
+def schedule_source(source: dict, active: set[str]) -> None:
     """Schedule fetching and dbt execution for a single source."""
     name = source.get("name", "unknown")
     fetcher_path = source["fetcher"]
-    models = source.get("models", [])
+    source_models = [m for m in source.get("models", []) if m in active]
     sched = source.get("schedule", "hourly")
 
     module_path, func_name = fetcher_path.rsplit(".", 1)
@@ -56,7 +61,7 @@ def schedule_source(source: dict) -> None:
     def run_source() -> None:
         logging.info("Running source '%s'", name)
         fetch_func()
-        run_dbt_pipeline(models)
+        run_dbt_pipeline(source_models)
 
     job = schedule.every()
     s = str(sched).lower()
@@ -86,13 +91,16 @@ def schedule_source(source: dict) -> None:
 
 def run_full_pipeline():
     """Fetch commodity data and run the dbt pipeline."""
+    cfg = load_config()
     fetch_commodities()
-    run_dbt_pipeline()
+    run_dbt_pipeline(sorted(active_models(cfg)))
 
 
 def main() -> None:
-    for source in load_config():
-        schedule_source(source)
+    cfg = load_config()
+    active = active_models(cfg)
+    for source in cfg.get("sources", []):
+        schedule_source(source, active)
 
     logging.info("Starting orchestration loop. Press Ctrl+C to stop.")
     while True:
