@@ -6,5 +6,5 @@ select
     avg(price) as avg_price,
     min(price) as min_price,
     max(price) as max_price
-from {{ ref('commodity_prices_bronze') }}
+from {{ ref('commodity_prices') }}
 group by 1,2
