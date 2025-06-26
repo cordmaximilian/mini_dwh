@@ -71,8 +71,15 @@ def schedule_source(source: dict, active: set[str]) -> None:
 
     def run_source() -> None:
         logging.info("Running source '%s'", name)
-        fetch_func()
-        run_dbt_pipeline(source_models)
+        try:
+            fetch_func()
+        except Exception:
+            logging.exception("Error fetching source '%s'", name)
+            return
+        try:
+            run_dbt_pipeline(source_models)
+        except Exception:
+            logging.exception("Error running dbt for source '%s'", name)
 
     job = schedule.every()
     s = str(sched).lower()

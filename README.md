@@ -99,6 +99,9 @@ docker compose exec dwh bash
 
 Running the container executes each source once and then continues to run
 them based on the schedule defined in `pipeline_config.yml`.
+Errors during fetching or model execution are logged. The orchestrator
+continues scheduling other runs so the container stays alive even if a
+step fails.
 
 If you prefer running everything locally, execute the orchestrator with
 Poetry instead:
