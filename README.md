@@ -1,174 +1,41 @@
-# Mini DWH with DuckDB and dbt
+# Mini DWH with DuckDB, dbt and Dagster
 
-This repository contains a minimal example of a data warehouse using
-[DuckDB](https://duckdb.org/) with transformation models managed by
-[dbt](https://www.getdbt.com/). A Dagster pipeline reads
-`pipeline_config.yml` at startup and schedules each data source
-individually. Before running the selected dbt models the configured fetch
-function is executed for that source.
+This repository provides a tiny data warehouse setup using DuckDB for storage,
+dbt for transformations and Dagster for orchestration.
 
-## Project structure
+## Quick start
 
-- `mini_dwh_dbt/` - dbt project containing models for bronze, silver and
-  gold layers.
-- `sources/` - Python modules that download external datasets. Each module
-  implements a `fetch()` function.
-- `mini_dwh_dbt/seeds/raw/` - example CSV datasets loaded as seeds.
-- `dagster_pipeline.py` - defines the Dagster job and schedules based on
-  `pipeline_config.yml`.
-- `mini_dwh_dbt/` is used as the working directory for all dbt commands
-  executed by Dagster.
-- `mini_dwh_dbt/data/warehouse.duckdb` - DuckDB file created when the pipeline runs.
+1. Install [Docker](https://docs.docker.com/get-docker/).
+2. Build and run the stack:
 
-## Configuration
+   ```bash
+   docker compose up --build
+   ```
 
-`pipeline_config.yml` controls which dbt models are run and how each source is executed. It contains two top-level sections:
+3. Access the running services:
+   - Dagster UI: <http://localhost:3000>
+   - DuckDB web UI: <http://localhost:8080>
+   - dbt docs: <http://localhost:8081>
 
-- `models` – list of dbt models with an `active` flag.
-- `sources` – entries defining the fetcher function, schedule and models to run.
+The warehouse database is stored in `data/warehouse.duckdb`. Open this file in
+[DBeaver](https://dbeaver.io/) to explore tables created by dbt.
 
-Example:
+## Editing models
 
-```yaml
-models:
-  - name: orders_enriched
-    active: true
-  - name: sales_by_country
-    active: true
+Models live under `mini_dwh_dbt/models`. Update `pipeline_config.yml` to control
+which models are executed. The Dagster container schedules and runs the active
+models automatically.
 
-sources:
-  - name: commodities
-    fetcher: sources.commodities.fetch
-    schedule: "hourly"
-    models:
-      - orders_enriched
-      - sales_by_country
-```
-## Requirements
-
-Dependencies are managed with [Poetry](https://python-poetry.org/). Create a
-virtual environment (Poetry will do this automatically) and install the
-dependencies (including `pandas` and `yfinance` used to fetch commodity
-prices):
+Toggle a model state with:
 
 ```bash
-pip install poetry  # if Poetry is not installed
-poetry install
+poetry run python register_model.py <model_name> --activate   # or --deactivate
 ```
 
-To run commands within the virtual environment use `poetry run`:
+## Repository overview
 
+- `dagster_pipeline.py` – Dagster job reading `pipeline_config.yml`.
+- `sources/` – Python modules for fetching raw data.
+- `mini_dwh_dbt/` – dbt project containing models and configuration.
 
-```bash
-poetry run dagster dev -m dagster_pipeline
-```
-
-## Running dbt commands manually
-
-When invoking `dbt` yourself (outside of Dagster)
-make sure the CLI is executed in the `mini_dwh_dbt/` directory so that the
-`dbt_project.yml` file is discovered. For example, to run a single model:
-
-```bash
-cd mini_dwh_dbt
-mkdir -p data  # create the DuckDB directory if it doesn't exist
-dbt run -s models/bronze/orders_bronze.sql
-```
-
-## Running the pipeline
-
-The simplest way to get started is to build and start the Docker
-container. This spins up Dagster which loads
-`pipeline_config.yml` and schedules the configured sources immediately:
-
-```bash
-docker compose up --build
-```
-
-The Compose stack exposes two services: the Dagster container and a
-DuckDB-Wasm Web UI reachable on `http://localhost:8080`. The service is
-based on the
-[`ghcr.io/duckdb/duckdb-wasm-shell`](https://github.com/duckdb/duckdb-wasm)
-Docker image and mounts the `data/` directory so the DuckDB file is
-available on the host. Dagster
-sets `DBT_PROFILES_DIR` automatically so dbt uses the bundled profile. Once
-the containers are running you can open a shell inside the DWH
-service if you want to execute additional `dbt` commands or inspect the
-database:
-
-```bash
-docker compose exec dwh bash
-```
-
-Running the container executes each source once and then continues to run
-them based on the schedule defined in `pipeline_config.yml`.
-Errors during fetching or model execution are logged. Dagster continues
-scheduling other runs so the container stays alive even if a
-step fails.
-
-If you prefer running everything locally, execute Dagster with Poetry
-instead:
-
-```bash
-poetry run dagster dev -m dagster_pipeline
-```
-
-
-## DuckDB-Wasm Web UI
-
-Docker Compose also starts a small service that hosts the official
-DuckDB-Wasm Web UI. Once the stack is running open
-`http://localhost:8080` in your browser. Use the **Open** button in the UI
-to load `data/warehouse.duckdb` from the repository and explore the
-database interactively.
-
-## Connecting with DBeaver
-
-You can also inspect the warehouse using the
-[DBeaver](https://dbeaver.io/) desktop application:
-
-1. Install and start DBeaver.
-2. Create a new connection and choose **DuckDB** as the database type.
-3. Browse to `mini_dwh_dbt/data/warehouse.duckdb` when prompted for the
-   database file.
-4. Finish the wizard to connect. Tables will appear in the navigator and
-   update automatically as the pipeline runs.
-
-## Adding new data sources
-
-Fetcher modules live in the `sources/` package. Each module must implement a
-`fetch()` function that downloads the raw data. See `sources/README.md` for
-more details.
-
-To register a new source create a module and update `pipeline_config.yml`:
-
-```yaml
-sources:
-  - name: my_source
-    fetcher: sources.my_source.fetch
-    schedule: "daily"
-    models:
-      - my_model
-```
-
-If the pipeline should run a new dbt model, activate it with `register_model.py`:
-
-```bash
-poetry run python register_model.py my_model --activate
-```
-
-## dbt configuration
-
-The dbt profile in `mini_dwh_dbt/profiles.yml` points to
-`mini_dwh_dbt/data/warehouse.duckdb`. Dagster automatically sets
-`DBT_PROFILES_DIR` to use this profile. You can override the database path by
-setting the `DUCKDB_PATH` environment variable.
-
-```yaml
-mini_dwh:
-  target: dev
-  outputs:
-    dev:
-      type: duckdb
-      path: "data/warehouse.duckdb"
-```
+Start the stack with Docker, modify dbt models and watch the pipeline run!
