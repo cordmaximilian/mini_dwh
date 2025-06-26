@@ -6,3 +6,4 @@ pandas
 yfinance
 dagster
 dagster-webserver
+requests
