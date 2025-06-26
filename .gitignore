@@ -3,8 +3,5 @@ __pycache__/
 *.py[cod]
 venv/
 
-# Data
-data/*.duckdb
-
 # DBT
 mini_dwh_dbt/target/
