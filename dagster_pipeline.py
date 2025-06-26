@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 
 import yaml
-from dagster import Definitions, ScheduleDefinition, job, op
+from dagster import Definitions, ScheduleDefinition, job, op, Field
 
 DBT_DIR = Path(__file__).parent / "mini_dwh_dbt"
 CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
@@ -12,10 +12,22 @@ CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
 os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
 
 
-@op(config_schema={"fetcher": str})
+@op(
+    config_schema={"fetcher": Field(str, is_required=False)},
+)
 def fetch_data(context) -> bool:
     """Import and execute the configured fetch function."""
-    fetcher = context.op_config["fetcher"]
+    fetcher = context.op_config.get("fetcher")
+    if not fetcher:
+        cfg = load_config()
+        if not cfg.get("sources"):
+            raise ValueError("No sources configured in pipeline_config.yml")
+        fetcher = cfg["sources"][0]["fetcher"]
+        context.log.info("Using default fetcher '%s'", fetcher)
+    if "." not in fetcher:
+        raise ValueError(
+            f"Invalid fetcher '{fetcher}'. Expected dotted path like 'module.func'"
+        )
     module_path, func_name = fetcher.rsplit(".", 1)
     module = importlib.import_module(module_path)
     func = getattr(module, func_name)
@@ -23,10 +35,16 @@ def fetch_data(context) -> bool:
     return True
 
 
-@op(config_schema={"models": [str]})
+@op(
+    config_schema={"models": Field([str], is_required=False, default_value=None)}
+)
 def run_dbt_pipeline(context, _start: bool) -> None:
     """Run dbt for the configured models."""
-    models = context.op_config.get("models", [])
+    models = context.op_config.get("models")
+    if models is None:
+        cfg = load_config()
+        models = list(active_models(cfg))
+        context.log.info("Using active models from config: %s", models)
     subprocess.run(["dbt", "seed"], check=True, cwd=DBT_DIR)
     if models:
         subprocess.run(["dbt", "run", "-s", *models], check=True, cwd=DBT_DIR)
