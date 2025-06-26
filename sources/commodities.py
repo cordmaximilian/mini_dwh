@@ -7,7 +7,7 @@ import yfinance as yf
 
 DATA_PATH = (
     Path(__file__).resolve().parent.parent
-    / "mini_dwh_dbt"
+    / "dbt"
     / "seeds"
     / "external"
     / "commodity_prices.csv"

@@ -6,7 +6,7 @@ from pathlib import Path
 import yaml
 from dagster import Definitions, ScheduleDefinition, job, op, Field
 
-DBT_DIR = Path(__file__).parent / "mini_dwh_dbt"
+DBT_DIR = Path(__file__).parent / "dbt"
 CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
 
 os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))

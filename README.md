@@ -31,7 +31,7 @@ model joins these datasets.
 
 ## Editing models
 
-Models live under `mini_dwh_dbt/models`. Update `pipeline_config.yml` to control
+Models live under `dbt/models`. Update `pipeline_config.yml` to control
 which models are executed. The Dagster container schedules and runs the active
 models automatically.
 
@@ -64,7 +64,7 @@ If no run configuration is supplied, the job falls back to the values defined in
 
 - `dagster_pipeline.py` – Dagster job reading `pipeline_config.yml`.
 - `sources/` – Python modules for fetching raw data.
-- `mini_dwh_dbt/` – dbt project containing models and configuration.
+- `dbt/` – dbt project containing models and configuration.
   - `sources/commodities.py` downloads futures prices for wheat, corn,
     soybeans, crude oil and a fertilizer index.
   - `sources/weather.py` fetches hourly temperature observations.

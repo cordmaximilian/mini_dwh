@@ -8,11 +8,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DBT_PROFILES_DIR: /app/mini_dwh_dbt
+      DBT_PROFILES_DIR: /app/dbt
 
   docs:
     build: .
-    working_dir: /app/mini_dwh_dbt
+    working_dir: /app/dbt
     command: bash -c "dbt docs generate && dbt docs serve --port 8081 --address 0.0.0.0"
 
     volumes:
@@ -20,4 +20,4 @@ services:
     ports:
       - "8081:8081"
     environment:
-      DBT_PROFILES_DIR: /app/mini_dwh_dbt
+      DBT_PROFILES_DIR: /app/dbt

@@ -7,4 +7,4 @@ venv/
 data/*.duckdb
 
 # DBT
-mini_dwh_dbt/target/
+dbt/target/
