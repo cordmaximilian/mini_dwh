@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "mini-dwh"
+name = "dwh"
 version = "0.1.0"
-description = "Mini data warehouse example using DuckDB and dbt"
+description = "Data warehouse example using DuckDB and dbt"
 authors = ["Your Name <you@example.com>"]
 package-mode = false
 
