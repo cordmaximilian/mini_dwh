@@ -28,13 +28,13 @@ def fetch() -> None:
         df = yf.download(ticker, start=start, end=end, interval="1h")
         if df.empty:
             continue
-        df = df.reset_index()[["Datetime", "Close"]]
+        df = df.reset_index()
+        df.rename(columns={df.columns[0]: "timestamp", "Close": "price"}, inplace=True)
         df["commodity"] = name
-        frames.append(df)
+        frames.append(df[["timestamp", "price", "commodity"]])
     if not frames:
         return
     result = pd.concat(frames)
-    result.rename(columns={"Datetime": "timestamp", "Close": "price"}, inplace=True)
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     result.to_csv(DATA_PATH, index=False)
 
