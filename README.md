@@ -37,22 +37,32 @@ poetry run python orchestrator.py
 
 ## Running the pipeline
 
-1. Initialize the database by running the orchestrator locally:
-
-```bash
-poetry run python orchestrator.py
-```
-
-Alternatively build and start the Docker container. The `data/` folder is
-mounted so the DuckDB file is accessible on the host:
+The simplest way to get started is to build and start the Docker
+container. This spins up the orchestrator and schedules the pipeline
+immediately:
 
 ```bash
 docker compose up --build
 ```
 
-The script runs `dbt seed`, `dbt run` and `dbt test` once and then
-schedules the same sequence to run every hour. Before each run it
-downloads the latest commodity prices.
+The service mounts the `data/` directory so the DuckDB file is available on
+the host. Once the container is running you can open a shell inside it if
+you want to execute additional `dbt` commands or inspect the database:
+
+```bash
+docker compose exec dwh bash
+```
+
+Running the container executes `dbt seed`, `dbt run` and `dbt test` once and
+then schedules the same sequence every hour. Before each run the latest
+commodity prices are downloaded.
+
+If you prefer running everything locally, execute the orchestrator with
+Poetry instead:
+
+```bash
+poetry run python orchestrator.py
+```
 
 ## Pipeline monitoring with Prefect
 
