@@ -46,7 +46,8 @@ docker compose up --build
 ```
 
 The service mounts the `data/` directory so the DuckDB file is available on
-the host. Once the container is running you can open a shell inside it if
+the host. The orchestrator sets `DBT_PROFILES_DIR` automatically so dbt uses
+the bundled profile. Once the container is running you can open a shell inside it if
 you want to execute additional `dbt` commands or inspect the database:
 
 ```bash
@@ -87,8 +88,9 @@ each run so you can keep track of your pipeline executions.
 ## dbt configuration
 
 The dbt profile in `mini_dwh_dbt/profiles.yml` points to
-`data/warehouse.duckdb`. You can override the path by setting the
-`DUCKDB_PATH` environment variable.
+`data/warehouse.duckdb`. The orchestrator automatically sets
+`DBT_PROFILES_DIR` to use this profile. You can override the database path by
+setting the `DUCKDB_PATH` environment variable.
 
 ```yaml
 mini_dwh:

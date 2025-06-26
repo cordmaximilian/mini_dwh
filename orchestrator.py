@@ -1,3 +1,4 @@
+import os
 import subprocess
 import schedule
 import time
@@ -8,6 +9,9 @@ from fetch_commodity_prices import fetch_commodity_prices
 from pathlib import Path
 
 DBT_DIR = Path(__file__).parent / "mini_dwh_dbt"
+
+# Ensure dbt uses the project-specific profile rather than the default
+os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
 
 
 def run_dbt_pipeline():
