@@ -33,32 +33,28 @@ def fetch(fetcher: str) -> None:
 
 def run_dbt(models: list[str] | None) -> None:
     download_seeds(DBT_DIR / "seeds" / "external")
+    # ``python -m dbt`` fails in some environments because dbt does not expose
+    # a ``__main__`` module. Use the ``dbt`` command-line entrypoint instead.
     subprocess.run([
-        sys.executable,
-        "-m",
         "dbt",
         "seed",
     ], check=True, cwd=DBT_DIR)
     if models:
         subprocess.run([
-            sys.executable,
-            "-m",
             "dbt",
             "run",
             "-s",
             *models,
         ], check=True, cwd=DBT_DIR)
         subprocess.run([
-            sys.executable,
-            "-m",
             "dbt",
             "test",
             "-s",
             *models,
         ], check=True, cwd=DBT_DIR)
     else:
-        subprocess.run([sys.executable, "-m", "dbt", "run"], check=True, cwd=DBT_DIR)
-        subprocess.run([sys.executable, "-m", "dbt", "test"], check=True, cwd=DBT_DIR)
+        subprocess.run(["dbt", "run"], check=True, cwd=DBT_DIR)
+        subprocess.run(["dbt", "test"], check=True, cwd=DBT_DIR)
 
 
 def main() -> None:
