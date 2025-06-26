@@ -1,10 +1,14 @@
 from prefect import task, flow
+import os
 import subprocess
 
 from fetch_commodity_prices import fetch_commodity_prices
 from pathlib import Path
 
 DBT_DIR = Path(__file__).parent / "mini_dwh_dbt"
+
+# Ensure dbt uses the project-specific profile
+os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
 
 
 @task
