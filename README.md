@@ -36,9 +36,28 @@ models automatically.
 
 Toggle a model state with:
 
+
 ```bash
 poetry run python register_model.py <model_name> --activate   # or --deactivate
 ```
+
+### Manual runs
+
+You can launch the pipeline manually from Dagster's UI using the **Launchpad**.
+Provide a run configuration that specifies the fetcher and the dbt models to execute:
+
+```yaml
+ops:
+  fetch_data:
+    config:
+      fetcher: sources.commodities.fetch
+  run_dbt_pipeline:
+    config:
+      models: [orders_enriched, sales_by_country]
+```
+
+If no run configuration is supplied, the job falls back to the values defined in
+`pipeline_config.yml`.
 
 ## Repository overview
 
