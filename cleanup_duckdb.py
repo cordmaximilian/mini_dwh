@@ -37,14 +37,21 @@ def db_tables(con: duckdb.DuckDBPyConnection) -> set[str]:
     return {r[0] for r in rows}
 
 
-def cleanup() -> None:
+def cleanup() -> list[str]:
     con = duckdb.connect(DB_PATH)
     managed = used_tables()
     existing = db_tables(con)
+    dropped: list[str] = []
     for table in sorted(existing - managed):
         con.execute(f'DROP TABLE "{table}"')
         print(f"Dropped {table}")
+        dropped.append(table)
     con.close()
+    if dropped:
+        print("Dropped tables:", dropped)
+    else:
+        print("No tables were dropped.")
+    return dropped
 
 
 if __name__ == "__main__":
