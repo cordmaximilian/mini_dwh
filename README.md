@@ -20,6 +20,30 @@ function is executed for that source.
   executed by the orchestrator and Prefect flow.
 - `data/warehouse.duckdb` - DuckDB file created when the pipeline runs.
 
+## Configuration
+
+`pipeline_config.yml` controls which dbt models are run and how each source is executed. It contains two top-level sections:
+
+- `models` – list of dbt models with an `active` flag.
+- `sources` – entries defining the fetcher function, schedule and models to run.
+
+Example:
+
+```yaml
+models:
+  - name: orders_enriched
+    active: true
+  - name: sales_by_country
+    active: true
+
+sources:
+  - name: commodities
+    fetcher: sources.commodities.fetch
+    schedule: "hourly"
+    models:
+      - orders_enriched
+      - sales_by_country
+```
 ## Requirements
 
 Dependencies are managed with [Poetry](https://python-poetry.org/). Create a
@@ -110,9 +134,24 @@ each run so you can keep track of your pipeline executions.
 
 Fetcher modules live in the `sources/` package. Each module must implement a
 `fetch()` function that downloads the raw data. See `sources/README.md` for
-instructions. Update `pipeline_config.yml` with the fully qualified module
-path (for example `sources.my_source.fetch`) so the orchestrator can locate
-the function.
+more details.
+
+To register a new source create a module and update `pipeline_config.yml`:
+
+```yaml
+sources:
+  - name: my_source
+    fetcher: sources.my_source.fetch
+    schedule: "daily"
+    models:
+      - my_model
+```
+
+If the pipeline should run a new dbt model, activate it with `register_model.py`:
+
+```bash
+poetry run python register_model.py my_model --activate
+```
 
 ## dbt configuration
 
