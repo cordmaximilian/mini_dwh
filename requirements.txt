@@ -5,3 +5,4 @@ dbt-duckdb
 pandas
 yfinance
 dagster
+dagster-webserver
