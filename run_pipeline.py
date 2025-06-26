@@ -6,6 +6,7 @@ import subprocess
 from pathlib import Path
 
 import yaml
+from s3_utils import download_seeds
 
 DBT_DIR = Path(__file__).parent / "dbt"
 CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
@@ -30,6 +31,7 @@ def fetch(fetcher: str) -> None:
 
 
 def run_dbt(models: list[str] | None) -> None:
+    download_seeds(DBT_DIR / "seeds" / "external")
     subprocess.run(["dbt", "seed"], check=True, cwd=DBT_DIR)
     if models:
         subprocess.run(["dbt", "run", "-s", *models], check=True, cwd=DBT_DIR)

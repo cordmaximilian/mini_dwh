@@ -30,8 +30,7 @@ dbt for transformations and Dagster for orchestration.
    - Lightdash: <http://localhost:8080>
 
 The warehouse database is stored in `data/warehouse.duckdb`. Raw CSV files are
-
-written to `../external_data`. Open the database in
+uploaded to a Minio S3 bucket named `warehouse`. Open the database in
 [DBeaver](https://dbeaver.io/) to explore tables created by dbt. Models are
 grouped into `bronze`, `silver` and `gold` schemas rather than having the stage
 as part of the table name. Several sample
@@ -65,9 +64,8 @@ The typical workflow when extending the warehouse is:
     dbt test -s your_model
     ```
 
-   ``dbt seed`` reads the CSV files produced by your fetchers from
-   ``../external_data``. The resulting tables are stored in
-   ``data/warehouse.duckdb``.
+   ``dbt seed`` first downloads the latest CSVs from the Minio bucket and then
+   loads them into ``data/warehouse.duckdb``.
 
 3. **Automate the pipeline**
    - Register active models using `register_model.py` and edit
@@ -142,12 +140,10 @@ Lightdash reads the dbt project and lets you define metrics and dashboards as
 YAML files alongside your models. The service runs on <http://localhost:8080>.
 Create an account when prompted and start exploring the warehouse.
 
-The `docker-compose.yml` file enables a built-in S3 mock so no external S3
-configuration is required. If you upgrade Lightdash and encounter an error about
-missing S3 settings, ensure that the `S3_MOCK` environment variable is set to
-`"true"` for the Lightdash service. Some versions also require placeholder S3
-variables even when the mock is enabled. These are provided in the compose file
-with default values so Lightdash starts without additional setup.
+CSV files and Lightdash assets are stored in a Minio object store included in
+the Docker stack. Access the Minio console at <http://localhost:9001> using
+``minio`` / ``minio123``.
+
 
 Start the stack with Docker, modify dbt models and watch the pipeline run!
 
