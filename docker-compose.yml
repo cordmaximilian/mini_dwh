@@ -34,6 +34,10 @@ services:
       PGPASSWORD: lightdash
       PGDATABASE: lightdash
       DBT_PROJECT_DIR: /usr/app/dbt
+      # Use a built-in local S3 server for development to avoid extra
+      # configuration. This prevents the runtime error about missing S3
+      # settings when starting the Lightdash container.
+      S3_MOCK: "true"
     ports:
       - "8080:8080"
 
