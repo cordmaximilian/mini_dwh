@@ -1,8 +1,6 @@
 version: 2
 
 models:
-  - name: users_bronze
-    description: 'Raw users data from seed'
   - name: commodity_prices_bronze
     description: 'Hourly commodity prices from seed'
   - name: weather_bronze

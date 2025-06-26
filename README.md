@@ -14,11 +14,13 @@ dbt for transformations and Dagster for orchestration.
 
 3. Build and run the stack:
 
+
    ```bash
    docker compose up --build
    ```
 
 4. Access the running services:
+
    - Dagster UI: <http://localhost:3000>
    - dbt docs: <http://localhost:8081>
    - Lightdash: <http://localhost:8080>
@@ -49,14 +51,16 @@ The typical workflow when extending the warehouse is:
    - Create or update models in `dbt/models`.
    - Execute them locally using:
 
-     ```bash
-     cd dbt
-     dbt seed
-     dbt run -s your_model
-     dbt test -s your_model
-     ```
+    ```bash
+    cd dbt
+    dbt seed
+    dbt run -s your_model
+    dbt test -s your_model
+    ```
 
-   The resulting tables are stored in `data/warehouse.duckdb`.
+   ``dbt seed`` reads the CSV files produced by your fetchers from
+   ``../external_data``. The resulting tables are stored in
+   ``data/warehouse.duckdb``.
 
 3. **Automate the pipeline**
    - Register active models using `register_model.py` and edit
