@@ -1,6 +1,7 @@
 import importlib
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 from s3_utils import download_seeds
@@ -48,13 +49,32 @@ def run_dbt_pipeline(context, _start: bool) -> None:
         models = list(active_models(cfg))
         context.log.info("Using active models from config: %s", models)
     download_seeds(DBT_DIR / "seeds" / "external")
-    subprocess.run(["dbt", "seed"], check=True, cwd=DBT_DIR)
+    subprocess.run([
+        sys.executable,
+        "-m",
+        "dbt",
+        "seed",
+    ], check=True, cwd=DBT_DIR)
     if models:
-        subprocess.run(["dbt", "run", "-s", *models], check=True, cwd=DBT_DIR)
-        subprocess.run(["dbt", "test", "-s", *models], check=True, cwd=DBT_DIR)
+        subprocess.run([
+            sys.executable,
+            "-m",
+            "dbt",
+            "run",
+            "-s",
+            *models,
+        ], check=True, cwd=DBT_DIR)
+        subprocess.run([
+            sys.executable,
+            "-m",
+            "dbt",
+            "test",
+            "-s",
+            *models,
+        ], check=True, cwd=DBT_DIR)
     else:
-        subprocess.run(["dbt", "run"], check=True, cwd=DBT_DIR)
-        subprocess.run(["dbt", "test"], check=True, cwd=DBT_DIR)
+        subprocess.run([sys.executable, "-m", "dbt", "run"], check=True, cwd=DBT_DIR)
+        subprocess.run([sys.executable, "-m", "dbt", "test"], check=True, cwd=DBT_DIR)
 
 
 @job
