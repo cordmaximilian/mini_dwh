@@ -20,6 +20,10 @@ def fetch() -> None:
         "wheat": "ZW=F",
         "corn": "ZC=F",
         "soybeans": "ZS=F",
+        # Crude oil futures
+        "oil": "CL=F",
+        # TODO: Replace with a valid fertilizer price ticker
+        "fertilizer": "FTR.F",
     }
     end = datetime.utcnow()
     start = end - timedelta(days=720)
