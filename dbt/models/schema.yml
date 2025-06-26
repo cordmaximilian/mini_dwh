@@ -9,3 +9,11 @@ models:
     description: 'Hourly weather observations from seed'
   - name: wheat_weather
     description: 'Wheat prices joined with weather data'
+  - name: commodity_prices_daily
+    description: 'Daily aggregated commodity prices'
+  - name: daily_weather
+    description: 'Daily averaged weather observations'
+  - name: commodity_price_signals
+    description: 'Moving average price signals for commodities'
+  - name: agri_buy_signals
+    description: 'Buy recommendations combining price signals and weather'
