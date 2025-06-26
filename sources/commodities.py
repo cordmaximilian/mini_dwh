@@ -15,14 +15,14 @@ DATA_PATH = (
 
 
 def fetch() -> None:
-    """Download commodity prices for the last five years and store them as a CSV."""
+    """Download commodity prices for roughly the last two years."""
     tickers = {
         "wheat": "ZW=F",
         "corn": "ZC=F",
         "soybeans": "ZS=F",
     }
     end = datetime.utcnow()
-    start = end - timedelta(days=5 * 365)
+    start = end - timedelta(days=720)
     frames = []
     for name, ticker in tickers.items():
         df = yf.download(ticker, start=start, end=end, interval="1h")
