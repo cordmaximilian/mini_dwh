@@ -38,6 +38,52 @@ World Bank. Commodity prices cover wheat, corn, soybeans, crude oil and a
 placeholder fertilizer index. The `wheat_weather` model joins the commodity and
 weather observations.
 
+## Development workflow
+
+The typical workflow when extending the warehouse is:
+
+1. **Pull raw data**
+   - Implement a new module under `sources/` exposing a `fetch()` function.
+   - Run the fetcher directly to download data into `../external_data`:
+
+     ```bash
+     poetry run python -m sources.your_source
+     ```
+
+2. **Transform with dbt**
+   - Create or update models in `dbt/models`.
+   - Execute them locally using:
+
+     ```bash
+     cd dbt
+     dbt seed
+     dbt run -s your_model
+     dbt test -s your_model
+     ```
+
+   The resulting tables are stored in `data/warehouse.duckdb`.
+
+3. **Automate the pipeline**
+   - Register active models using `register_model.py` and edit
+     `pipeline_config.yml` to add the fetcher, desired models and schedule.
+
+     ```bash
+     poetry run python register_model.py your_model --activate
+     ```
+
+   - Start the stack and Dagster will execute the job automatically according
+     to the configured schedules:
+
+     ```bash
+     docker compose up
+     ```
+
+For quick local iterations you can combine both steps using `run_pipeline.py`:
+
+```bash
+poetry run python run_pipeline.py --fetcher sources.weather.fetch --models your_model
+```
+
 ## Editing models
 
 Models live under `dbt/models`. Update `pipeline_config.yml` to control
@@ -72,6 +118,7 @@ If no run configuration is supplied, the job falls back to the values defined in
 ## Repository overview
 
 - `dagster_pipeline.py` – Dagster job reading `pipeline_config.yml`.
+- `run_pipeline.py` – helper script to fetch data and run dbt once.
 - `sources/` – Python modules for fetching raw data.
 - `dbt/` – dbt project containing models and configuration.
   - Raw CSV files are stored one level above the project in `../external_data`.
