@@ -5,8 +5,22 @@ services:
     volumes:
       - ./data:/app/data
     command: dagster dev -m dagster_pipeline --host 0.0.0.0
+    ports:
+      - "3000:3000"
+    environment:
+      DBT_PROFILES_DIR: /app/mini_dwh_dbt
 
   webui:
     image: ghcr.io/duckdb/duckdb-wasm-shell:latest
     ports:
       - "8080:8080"
+
+  docs:
+    build: .
+    command: bash -c "dbt docs generate && dbt docs serve --port 8081 --address 0.0.0.0"
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "8081:8081"
+    environment:
+      DBT_PROFILES_DIR: /app/mini_dwh_dbt
