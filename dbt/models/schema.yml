@@ -1,9 +1,9 @@
 version: 2
 
 models:
-  - name: commodity_prices_bronze
+  - name: commodity_prices
     description: 'Hourly commodity prices from seed'
-  - name: weather_bronze
+  - name: weather
     description: 'Hourly weather observations from seed'
   - name: wheat_weather
     description: 'Wheat prices joined with weather data'
