@@ -131,3 +131,13 @@ If no run configuration is supplied, the job falls back to the values defined in
   - `sources/world_bank.py` collects GDP data from the World Bank API.
 
 Start the stack with Docker, modify dbt models and watch the pipeline run!
+
+## Database cleanup
+
+Old tables may accumulate in `data/warehouse.duckdb` when models are renamed or removed.
+Run the `cleanup_duckdb.py` helper to drop any tables that are not backed by a
+dbt model or seed:
+
+```bash
+python cleanup_duckdb.py
+```
