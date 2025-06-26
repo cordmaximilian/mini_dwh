@@ -5,11 +5,16 @@ import time
 from fetch_commodity_prices import fetch_commodity_prices
 
 
+from pathlib import Path
+
+DBT_DIR = Path(__file__).parent / "mini_dwh_dbt"
+
+
 def run_dbt_pipeline():
     """Run dbt commands for the full pipeline."""
-    subprocess.run(["dbt", "seed"], check=True)
-    subprocess.run(["dbt", "run"], check=True)
-    subprocess.run(["dbt", "test"], check=True)
+    subprocess.run(["dbt", "seed"], check=True, cwd=DBT_DIR)
+    subprocess.run(["dbt", "run"], check=True, cwd=DBT_DIR)
+    subprocess.run(["dbt", "test"], check=True, cwd=DBT_DIR)
 
 
 def run_full_pipeline():
