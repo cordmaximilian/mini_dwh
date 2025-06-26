@@ -49,32 +49,30 @@ def run_dbt_pipeline(context, _start: bool) -> None:
         models = list(active_models(cfg))
         context.log.info("Using active models from config: %s", models)
     download_seeds(DBT_DIR / "seeds" / "external")
+    # Use the ``dbt`` command directly rather than ``python -m dbt``. Some
+    # environments (including the Docker image used for this project) do not
+    # provide a ``__main__`` module for dbt which causes ``python -m dbt`` to
+    # exit with status 1. Invoking the ``dbt`` entrypoint avoids this problem.
     subprocess.run([
-        sys.executable,
-        "-m",
         "dbt",
         "seed",
     ], check=True, cwd=DBT_DIR)
     if models:
         subprocess.run([
-            sys.executable,
-            "-m",
             "dbt",
             "run",
             "-s",
             *models,
         ], check=True, cwd=DBT_DIR)
         subprocess.run([
-            sys.executable,
-            "-m",
             "dbt",
             "test",
             "-s",
             *models,
         ], check=True, cwd=DBT_DIR)
     else:
-        subprocess.run([sys.executable, "-m", "dbt", "run"], check=True, cwd=DBT_DIR)
-        subprocess.run([sys.executable, "-m", "dbt", "test"], check=True, cwd=DBT_DIR)
+        subprocess.run(["dbt", "run"], check=True, cwd=DBT_DIR)
+        subprocess.run(["dbt", "test"], check=True, cwd=DBT_DIR)
 
 
 @job
