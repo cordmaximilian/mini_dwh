@@ -2,9 +2,16 @@ import os
 import subprocess
 import schedule
 import time
+
 import yaml
 import importlib
 import logging
+
+
+from sources.commodities import fetch as fetch_commodities
+
+
+
 from pathlib import Path
 
 DBT_DIR = Path(__file__).parent / "mini_dwh_dbt"
@@ -74,6 +81,13 @@ def schedule_source(source: dict) -> None:
     job.do(run_source)
     # Run once at startup
     run_source()
+
+
+
+def run_full_pipeline():
+    """Fetch commodity data and run the dbt pipeline."""
+    fetch_commodities()
+    run_dbt_pipeline()
 
 
 def main() -> None:

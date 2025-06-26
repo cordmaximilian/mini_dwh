@@ -6,7 +6,7 @@ import yfinance as yf
 
 
 DATA_PATH = (
-    Path(__file__).parent
+    Path(__file__).resolve().parent.parent
     / "mini_dwh_dbt"
     / "seeds"
     / "external"
@@ -14,8 +14,8 @@ DATA_PATH = (
 )
 
 
-def fetch_commodity_prices() -> None:
-    """Download commodity prices for the last five years and store as a CSV."""
+def fetch() -> None:
+    """Download commodity prices for the last five years and store them as a CSV."""
     tickers = {
         "wheat": "ZW=F",
         "corn": "ZC=F",
@@ -40,4 +40,4 @@ def fetch_commodity_prices() -> None:
 
 
 if __name__ == "__main__":
-    fetch_commodity_prices()
+    fetch()

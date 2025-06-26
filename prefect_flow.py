@@ -2,7 +2,7 @@ from prefect import task, flow
 import os
 import subprocess
 
-from fetch_commodity_prices import fetch_commodity_prices
+from sources.commodities import fetch as fetch_commodities
 from pathlib import Path
 
 DBT_DIR = Path(__file__).parent / "mini_dwh_dbt"
@@ -14,7 +14,7 @@ os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
 @task
 def fetch_data():
     """Download commodity prices and store them as a CSV."""
-    fetch_commodity_prices()
+    fetch_commodities()
 
 
 @task
