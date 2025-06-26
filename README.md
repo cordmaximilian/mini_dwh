@@ -12,17 +12,24 @@ dbt for transformations and Dagster for orchestration.
    poetry lock
    ```
 
-3. Build and run the stack:
+3. Create a directory for raw CSV files next to the project:
+
+   ```bash
+   mkdir ../external_data
+   ```
+
+4. Build and run the stack:
 
    ```bash
    docker compose up --build
    ```
 
-4. Access the running services:
+5. Access the running services:
    - Dagster UI: <http://localhost:3000>
    - dbt docs: <http://localhost:8081>
 
-The warehouse database is stored in `data/warehouse.duckdb`. Open this file in
+The warehouse database is stored in `data/warehouse.duckdb`. Raw CSV files are
+written to `../external_data`. Open the database in
 [DBeaver](https://dbeaver.io/) to explore tables created by dbt. Several sample
 sources are included: hourly commodity prices from Yahoo Finance and hourly
 weather data from the Open‑Meteo API. Additional fetchers provide stock prices,
@@ -67,6 +74,7 @@ If no run configuration is supplied, the job falls back to the values defined in
 - `dagster_pipeline.py` – Dagster job reading `pipeline_config.yml`.
 - `sources/` – Python modules for fetching raw data.
 - `dbt/` – dbt project containing models and configuration.
+  - Raw CSV files are stored one level above the project in `../external_data`.
   - `sources/commodities.py` downloads futures prices for wheat, corn,
     soybeans, crude oil and a fertilizer index.
   - `sources/weather.py` fetches hourly temperature observations.

@@ -1,15 +1,10 @@
 from pathlib import Path
 
+from . import EXTERNAL_DATA_DIR
 import pandas as pd
 import requests
 
-DATA_PATH = (
-    Path(__file__).resolve().parent.parent
-    / "dbt"
-    / "seeds"
-    / "external"
-    / "weather_forecast.csv"
-)
+DATA_PATH = EXTERNAL_DATA_DIR / "weather_forecast.csv"
 
 
 def fetch() -> None:

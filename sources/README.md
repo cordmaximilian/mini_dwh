@@ -1,6 +1,6 @@
 # Source Modules
 
-This package contains modules responsible for fetching raw datasets used by the data warehouse. Each module exposes a single `fetch()` function which downloads data and writes it to the appropriate location under `dbt/seeds/`.
+This package contains modules responsible for fetching raw datasets used by the data warehouse. Each module exposes a single `fetch()` function which downloads data and writes it to ``../external_data`` (relative to the project root).
 
 To add a new source:
 
