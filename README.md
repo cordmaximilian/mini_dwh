@@ -54,7 +54,7 @@ ops:
       fetcher: sources.commodities.fetch
   run_dbt_pipeline:
     config:
-      models: [orders_enriched, sales_by_country]
+      models: [wheat_weather]
 ```
 
 If no run configuration is supplied, the job falls back to the values defined in
