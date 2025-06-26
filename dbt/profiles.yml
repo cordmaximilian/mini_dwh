@@ -1,4 +1,4 @@
-mini_dwh:
+dwh:
   target: dev
   outputs:
     dev:
