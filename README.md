@@ -82,7 +82,8 @@ poetry run python orchestrator.py
 ## Pipeline monitoring with Prefect
 
 The project includes an optional Prefect flow in `prefect_flow.py` so you
-can monitor pipeline runs using Prefect's UI.
+can monitor pipeline runs using Prefect's UI. Deployments are created from
+`pipeline_config.yml` using `register_deployments.py`.
 
 Start the local Prefect server in one terminal:
 
@@ -90,10 +91,16 @@ Start the local Prefect server in one terminal:
 poetry run prefect orion start
 ```
 
-Then execute the flow in another terminal:
+Register the deployments in another terminal:
 
 ```bash
-poetry run python prefect_flow.py
+poetry run python register_deployments.py
+```
+
+Finally, start a worker to execute scheduled runs:
+
+```bash
+poetry run prefect agent start -q default
 ```
 
 The Prefect UI, available at `http://127.0.0.1:4200`, shows the status of
