@@ -23,7 +23,9 @@ dbt for transformations and Dagster for orchestration.
    - dbt docs: <http://localhost:8081>
 
 The warehouse database is stored in `data/warehouse.duckdb`. Open this file in
-[DBeaver](https://dbeaver.io/) to explore tables created by dbt. Two sample
+[DBeaver](https://dbeaver.io/) to explore tables created by dbt. Tables are
+organized into `bronze`, `silver` and `gold` schemas according to their
+transformation stage. Two sample
 sources are included: hourly commodity prices from Yahoo Finance and hourly
 weather data from the Open‑Meteo API. Commodity prices cover wheat, corn,
 soybeans, crude oil and a placeholder fertilizer index. The `wheat_weather`
