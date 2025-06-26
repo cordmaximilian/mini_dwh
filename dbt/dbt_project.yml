@@ -5,7 +5,7 @@ config-version: 2
 profile: 'dwh'
 
 model-paths: ['models']
-seed-paths: ['seeds', '../../external_data']
+seed-paths: ['seeds']
 
 target-path: 'target'
 
