@@ -6,13 +6,19 @@ dbt for transformations and Dagster for orchestration.
 ## Quick start
 
 1. Install [Docker](https://docs.docker.com/get-docker/).
-2. Build and run the stack:
+2. Generate the `poetry.lock` file:
+
+   ```bash
+   poetry lock
+   ```
+
+3. Build and run the stack:
 
    ```bash
    docker compose up --build
    ```
 
-3. Access the running services:
+4. Access the running services:
    - Dagster UI: <http://localhost:3000>
    - dbt docs: <http://localhost:8081>
 
