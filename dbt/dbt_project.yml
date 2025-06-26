@@ -1,8 +1,8 @@
-name: 'mini_dwh'
+name: 'dwh'
 version: '1.0'
 config-version: 2
 
-profile: 'mini_dwh'
+profile: 'dwh'
 
 model-paths: ['models']
 seed-paths: ['seeds']
@@ -10,7 +10,7 @@ seed-paths: ['seeds']
 target-path: 'target'
 
 models:
-  mini_dwh:
+  dwh:
     bronze:
       materialized: table
     silver:

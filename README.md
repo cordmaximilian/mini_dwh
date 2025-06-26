@@ -1,4 +1,4 @@
-# Mini DWH with DuckDB, dbt and Dagster
+# DWH with DuckDB, dbt and Dagster
 
 This repository provides a tiny data warehouse setup using DuckDB for storage,
 dbt for transformations and Dagster for orchestration.
@@ -54,7 +54,7 @@ ops:
       fetcher: sources.commodities.fetch
   run_dbt_pipeline:
     config:
-      models: [orders_enriched, sales_by_country]
+      models: [wheat_weather]
 ```
 
 If no run configuration is supplied, the job falls back to the values defined in
