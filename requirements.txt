@@ -1,8 +1,8 @@
 # Requirements exported from Poetry
+duckdb
 schedule
 dbt-core
-dbt-postgres
+dbt-duckdb
 pandas
 yfinance
 prefect
-psycopg2-binary

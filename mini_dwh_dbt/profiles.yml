@@ -2,11 +2,5 @@ mini_dwh:
   target: dev
   outputs:
     dev:
-      type: postgres
-      threads: 1
-      host: "{{ env_var('POSTGRES_HOST', 'localhost') }}"
-      port: "{{ env_var('POSTGRES_PORT', '5432') }}"
-      user: "{{ env_var('POSTGRES_USER', 'postgres') }}"
-      pass: "{{ env_var('POSTGRES_PASSWORD', 'postgres') }}"
-      dbname: "{{ env_var('POSTGRES_DB', 'mini_dwh') }}"
-      schema: public
+      type: duckdb
+      path: "data/warehouse.duckdb"
