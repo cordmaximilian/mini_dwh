@@ -16,4 +16,4 @@ RUN poetry install --no-interaction --no-ansi
 COPY . .
 
 # Default command
-CMD ["python", "orchestrator.py"]
+CMD ["dagster", "dev", "-m", "dagster_pipeline", "--host", "0.0.0.0"]

@@ -1,8 +1,7 @@
 # Requirements exported from Poetry
 duckdb
-schedule
 dbt-core
 dbt-duckdb
 pandas
 yfinance
-prefect
+dagster
