@@ -144,6 +144,7 @@ CSV files and Lightdash assets are stored in a Minio object store included in
 the Docker stack. Access the Minio console at <http://localhost:9001> using
 ``minio`` / ``minio123``.
 
+
 Start the stack with Docker, modify dbt models and watch the pipeline run!
 
 ## Database cleanup
