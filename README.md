@@ -145,7 +145,9 @@ Create an account when prompted and start exploring the warehouse.
 The `docker-compose.yml` file enables a built-in S3 mock so no external S3
 configuration is required. If you upgrade Lightdash and encounter an error about
 missing S3 settings, ensure that the `S3_MOCK` environment variable is set to
-`"true"` for the Lightdash service.
+`"true"` for the Lightdash service. Some versions also require placeholder S3
+variables even when the mock is enabled. These are provided in the compose file
+with default values so Lightdash starts without additional setup.
 
 Start the stack with Docker, modify dbt models and watch the pipeline run!
 
