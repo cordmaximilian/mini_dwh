@@ -1,5 +1,16 @@
 version: '3.8'
 services:
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
   dwh:
     build: .
     volumes:
@@ -9,6 +20,10 @@ services:
       - "3000:3000"
     environment:
       DBT_PROFILES_DIR: /app/dbt
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: minio123
+      S3_ENDPOINT: http://minio:9000
+      S3_BUCKET: warehouse
 
   lightdash_db:
     image: postgres:13
@@ -34,10 +49,12 @@ services:
       PGPASSWORD: lightdash
       PGDATABASE: lightdash
       DBT_PROJECT_DIR: /usr/app/dbt
-      # Use a built-in local S3 server for development to avoid extra
-      # configuration. This prevents the runtime error about missing S3
-      # settings when starting the Lightdash container.
-      S3_MOCK: "true"
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: minio123
+      S3_ENDPOINT: http://minio:9000
+      S3_BUCKET_NAME: lightdash
+      S3_REGION: us-east-1
+      S3_FORCE_PATH_STYLE: "true"
     ports:
       - "8080:8080"
 
@@ -55,3 +72,4 @@ services:
 
 volumes:
   lightdash_db:
+  minio_data:

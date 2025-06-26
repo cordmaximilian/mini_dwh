@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import pandas as pd
 import yfinance as yf
+from s3_utils import upload_seed
 
 
 DATA_PATH = (
@@ -44,6 +45,7 @@ def fetch() -> None:
     result = pd.concat(frames)
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     result.to_csv(DATA_PATH, index=False)
+    upload_seed(DATA_PATH)
 
 
 if __name__ == "__main__":
