@@ -28,8 +28,12 @@ def fetch() -> None:
         df = yf.download(ticker, start=start, end=end, interval="1h")
         if df.empty:
             continue
+        # Ensure the index is named so reset_index produces a ``timestamp`` column
+        df.index.name = "timestamp"
         df = df.reset_index()
-        df.rename(columns={df.columns[0]: "timestamp", "Close": "price"}, inplace=True)
+        # yfinance may return ``Close`` or ``Adj Close`` depending on options
+        price_col = "Close" if "Close" in df.columns else "Adj Close"
+        df.rename(columns={price_col: "price"}, inplace=True)
         df["commodity"] = name
         frames.append(df[["timestamp", "price", "commodity"]])
     if not frames:
