@@ -1,7 +1,7 @@
-# Mini DWH with DuckDB and dbt
+# Mini DWH with PostgreSQL and dbt
 
 This repository contains a minimal example of a data warehouse using
-[DuckDB](https://duckdb.org/) with transformation models managed by
+[PostgreSQL](https://www.postgresql.org/) with transformation models managed by
 [dbt](https://www.getdbt.com/). An orchestration script reads
 `pipeline_config.yml` at startup and schedules each data source
 individually. Before running the selected dbt models the configured fetch
@@ -18,7 +18,6 @@ function is executed for that source.
   executes each source on its defined schedule.
 - `mini_dwh_dbt/` is used as the working directory for all dbt commands
   executed by the orchestrator and Prefect flow.
-- `mini_dwh_dbt/data/warehouse.duckdb` - DuckDB file created when the pipeline runs.
 
 ## Configuration
 
@@ -71,7 +70,6 @@ make sure the CLI is executed in the `mini_dwh_dbt/` directory so that the
 
 ```bash
 cd mini_dwh_dbt
-mkdir -p data  # create the DuckDB directory if it doesn't exist
 dbt run -s models/bronze/orders_bronze.sql
 ```
 
@@ -86,12 +84,10 @@ docker compose up --build
 ```
 
 The Compose stack exposes two services: the orchestrator container and a
-DuckDB-Wasm Web UI reachable on `http://localhost:8080`. The service mounts
-the `data/` directory so the DuckDB file is available on the host. The
-orchestrator sets `DBT_PROFILES_DIR` automatically so dbt uses the bundled
-profile. Once the containers are running you can open a shell inside the DWH
-service if you want to execute additional `dbt` commands or inspect the
-database:
+PostgreSQL server accessible on `localhost:5432`. The orchestrator sets
+`DBT_PROFILES_DIR` automatically so dbt uses the bundled profile. Once the
+containers are running you can open a shell inside the DWH service if you
+want to execute additional `dbt` commands or inspect the database:
 
 ```bash
 docker compose exec dwh bash
@@ -137,13 +133,11 @@ poetry run prefect agent start -q default
 The Prefect UI, available at `http://127.0.0.1:4200`, shows the status of
 each run so you can keep track of your pipeline executions.
 
-## DuckDB-Wasm Web UI
+## Database access
 
-Docker Compose also starts a small service that hosts the official
-DuckDB-Wasm Web UI. Once the stack is running open
-`http://localhost:8080` in your browser. Use the **Open** button in the UI
-to load `data/warehouse.duckdb` from the repository and explore the
-database interactively.
+The PostgreSQL service persists its data in a Docker volume so the
+warehouse state is retained between runs. Connect with any PostgreSQL
+client using the credentials defined in `docker-compose.yml`.
 
 ## Adding new data sources
 
@@ -170,16 +164,21 @@ poetry run python register_model.py my_model --activate
 
 ## dbt configuration
 
-The dbt profile in `mini_dwh_dbt/profiles.yml` points to
-`mini_dwh_dbt/data/warehouse.duckdb`. The orchestrator automatically sets
-`DBT_PROFILES_DIR` to use this profile. You can override the database path by
-setting the `DUCKDB_PATH` environment variable.
+The dbt profile in `mini_dwh_dbt/profiles.yml` is used by the orchestrator.
+It automatically sets
+`DBT_PROFILES_DIR` to use this profile. Connection details are configured via
+environment variables passed to the container.
 
 ```yaml
 mini_dwh:
   target: dev
   outputs:
     dev:
-      type: duckdb
-      path: "data/warehouse.duckdb"
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST') }}"
+      port: "{{ env_var('POSTGRES_PORT') }}"
+      user: "{{ env_var('POSTGRES_USER') }}"
+      pass: "{{ env_var('POSTGRES_PASSWORD') }}"
+      dbname: "{{ env_var('POSTGRES_DB') }}"
+      schema: public
 ```
