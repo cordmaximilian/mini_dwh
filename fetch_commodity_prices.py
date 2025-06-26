@@ -5,7 +5,13 @@ import pandas as pd
 import yfinance as yf
 
 
-DATA_PATH = Path(__file__).parent / "mini_dwh_dbt" / "seeds" / "external" / "commodity_prices.csv"
+DATA_PATH = (
+    Path(__file__).parent
+    / "mini_dwh_dbt"
+    / "seeds"
+    / "external"
+    / "commodity_prices.csv"
+)
 
 
 def fetch_commodity_prices() -> None:
