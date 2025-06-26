@@ -10,6 +10,8 @@ each dbt run.
 
 - `mini_dwh_dbt/` - dbt project containing models for bronze, silver and
   gold layers.
+- `sources/` - Python modules that download external datasets. Each module
+  implements a `fetch()` function.
 - `mini_dwh_dbt/seeds/raw/` - example CSV datasets loaded as seeds.
 - `orchestrator.py` - scheduler that fetches commodity prices and runs
   the dbt pipeline every hour.
@@ -96,6 +98,14 @@ poetry run python prefect_flow.py
 
 The Prefect UI, available at `http://127.0.0.1:4200`, shows the status of
 each run so you can keep track of your pipeline executions.
+
+## Adding new data sources
+
+Fetcher modules live in the `sources/` package. Each module must implement a
+`fetch()` function that downloads the raw data. See `sources/README.md` for
+instructions. Update `pipeline_config.yml` with the fully qualified module
+path (for example `sources.my_source.fetch`) so the orchestrator can locate
+the function.
 
 ## dbt configuration
 
