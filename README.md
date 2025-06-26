@@ -2,9 +2,10 @@
 
 This repository contains a minimal example of a data warehouse using
 [DuckDB](https://duckdb.org/) with transformation models managed by
-[dbt](https://www.getdbt.com/). An example orchestration script runs the
-data pipeline on an hourly schedule and fetches commodity prices before
-each dbt run.
+[dbt](https://www.getdbt.com/). An orchestration script reads
+`pipeline_config.yml` at startup and schedules each data source
+individually. Before running the selected dbt models the configured fetch
+function is executed for that source.
 
 ## Project structure
 
@@ -13,8 +14,8 @@ each dbt run.
 - `sources/` - Python modules that download external datasets. Each module
   implements a `fetch()` function.
 - `mini_dwh_dbt/seeds/raw/` - example CSV datasets loaded as seeds.
-- `orchestrator.py` - scheduler that fetches commodity prices and runs
-  the dbt pipeline every hour.
+- `orchestrator.py` - scheduler that loads `pipeline_config.yml` and
+  executes each source on its defined schedule.
 - `mini_dwh_dbt/` is used as the working directory for all dbt commands
   executed by the orchestrator and Prefect flow.
 - `data/warehouse.duckdb` - DuckDB file created when the pipeline runs.
@@ -52,8 +53,8 @@ dbt run -s models/bronze/orders_bronze.sql
 ## Running the pipeline
 
 The simplest way to get started is to build and start the Docker
-container. This spins up the orchestrator and schedules the pipeline
-immediately:
+container. This spins up the orchestrator which loads
+`pipeline_config.yml` and schedules the configured sources immediately:
 
 ```bash
 docker compose up --build
@@ -68,9 +69,8 @@ you want to execute additional `dbt` commands or inspect the database:
 docker compose exec dwh bash
 ```
 
-Running the container executes `dbt seed`, `dbt run` and `dbt test` once and
-then schedules the same sequence every hour. Before each run the latest
-commodity prices are downloaded.
+Running the container executes each source once and then continues to run
+them based on the schedule defined in `pipeline_config.yml`.
 
 If you prefer running everything locally, execute the orchestrator with
 Poetry instead:
