@@ -7,6 +7,6 @@ services:
     command: dagster dev -m dagster_pipeline --host 0.0.0.0
 
   webui:
-    image: duckdb/duckdb-wasm-shell:latest
+    image: ghcr.io/duckdb/duckdb-wasm-shell:latest
     ports:
       - "8080:8080"

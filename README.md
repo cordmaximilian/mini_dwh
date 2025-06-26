@@ -86,8 +86,11 @@ docker compose up --build
 ```
 
 The Compose stack exposes two services: the Dagster container and a
-DuckDB-Wasm Web UI reachable on `http://localhost:8080`. The service mounts
-the `data/` directory so the DuckDB file is available on the host. Dagster
+DuckDB-Wasm Web UI reachable on `http://localhost:8080`. The service is
+based on the
+[`ghcr.io/duckdb/duckdb-wasm-shell`](https://github.com/duckdb/duckdb-wasm)
+Docker image and mounts the `data/` directory so the DuckDB file is
+available on the host. Dagster
 sets `DBT_PROFILES_DIR` automatically so dbt uses the bundled profile. Once
 the containers are running you can open a shell inside the DWH
 service if you want to execute additional `dbt` commands or inspect the
