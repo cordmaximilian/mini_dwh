@@ -31,8 +31,20 @@ poetry install
 
 To run commands within the virtual environment use `poetry run`:
 
+
 ```bash
 poetry run python orchestrator.py
+```
+
+## Running dbt commands manually
+
+When invoking `dbt` yourself (outside of the orchestrator or Prefect flow)
+make sure the CLI is executed in the `mini_dwh_dbt/` directory so that the
+`dbt_project.yml` file is discovered. For example, to run a single model:
+
+```bash
+cd mini_dwh_dbt
+dbt run -s models/bronze/orders_bronze.sql
 ```
 
 ## Running the pipeline
