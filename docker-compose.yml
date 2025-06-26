@@ -25,38 +25,25 @@ services:
       S3_ENDPOINT: http://minio:9000
       S3_BUCKET: warehouse
 
-  lightdash_db:
+  helm_db:
     image: postgres:13
     environment:
-      POSTGRES_USER: lightdash
-      POSTGRES_PASSWORD: lightdash
-      POSTGRES_DB: lightdash
+      POSTGRES_USER: helm
+      POSTGRES_PASSWORD: helm
+      POSTGRES_DB: helm
     volumes:
-      - lightdash_db:/var/lib/postgresql/data
+      - helm_db:/var/lib/postgresql/data
 
-  lightdash:
-    image: lightdash/lightdash:latest
+  helm:
+    image: helm/helm:latest
     depends_on:
-      - lightdash_db
-    volumes:
-      - ./dbt:/usr/app/dbt
-      - ./data:/usr/app/data
+      - helm_db
     environment:
-      LIGHTDASH_SECRET: supersecret
-      PGHOST: lightdash_db
+      PGHOST: helm_db
       PGPORT: 5432
-      PGUSER: lightdash
-      PGPASSWORD: lightdash
-      PGDATABASE: lightdash
-      DBT_PROJECT_DIR: /usr/app/dbt
-
-      AWS_ACCESS_KEY_ID: minio
-      AWS_SECRET_ACCESS_KEY: minio123
-      S3_ENDPOINT: http://minio:9000
-      S3_BUCKET: lightdash
-      S3_REGION: us-east-1
-      S3_FORCE_PATH_STYLE: "true"
-
+      PGUSER: helm
+      PGPASSWORD: helm
+      PGDATABASE: helm
     ports:
         - "8080:8080"
 
@@ -73,5 +60,5 @@ services:
       DBT_PROFILES_DIR: /app/dbt
 
 volumes:
-  lightdash_db:
+  helm_db:
   minio_data:
