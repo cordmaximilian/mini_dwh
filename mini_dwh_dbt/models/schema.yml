@@ -9,3 +9,9 @@ models:
     description: 'Orders joined with users'
   - name: sales_by_country
     description: 'Aggregated sales by country'
+  - name: commodity_prices_bronze
+    description: 'Hourly commodity prices from seed'
+  - name: weather_bronze
+    description: 'Hourly weather observations from seed'
+  - name: wheat_weather
+    description: 'Wheat prices joined with weather data'

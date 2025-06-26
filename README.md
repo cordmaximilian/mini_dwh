@@ -23,7 +23,10 @@ dbt for transformations and Dagster for orchestration.
    - dbt docs: <http://localhost:8081>
 
 The warehouse database is stored in `data/warehouse.duckdb`. Open this file in
-[DBeaver](https://dbeaver.io/) to explore tables created by dbt.
+[DBeaver](https://dbeaver.io/) to explore tables created by dbt. Two sample
+sources are included: hourly commodity prices from Yahoo Finance and hourly
+weather data from the Open‑Meteo API. The `wheat_weather` model joins these
+datasets.
 
 ## Editing models
 
@@ -42,5 +45,7 @@ poetry run python register_model.py <model_name> --activate   # or --deactivate
 - `dagster_pipeline.py` – Dagster job reading `pipeline_config.yml`.
 - `sources/` – Python modules for fetching raw data.
 - `mini_dwh_dbt/` – dbt project containing models and configuration.
+  - `sources/commodities.py` downloads futures prices.
+  - `sources/weather.py` fetches hourly temperature observations.
 
 Start the stack with Docker, modify dbt models and watch the pipeline run!
