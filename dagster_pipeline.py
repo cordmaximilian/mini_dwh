@@ -2,8 +2,10 @@ import os
 from dagster import Definitions, ScheduleDefinition, job, op, Field, Noneable
 from utils import DBT_DIR, _run_dbt, invoke_fetcher
 
-DEFAULT_FETCHER = "sources.finance.fetch"
-DEFAULT_MODELS = [
+BASKETBALL_FETCHER = "sources.basketball.fetch"
+FINANCE_FETCHER = "sources.finance.fetch"
+
+BASKETBALL_MODELS = [
     "player_stats",
     "players",
     "teams",
@@ -12,51 +14,71 @@ DEFAULT_MODELS = [
     "player_efficiency",
     "player_game_facts",
 ]
+
+FINANCE_MODELS = [
+    "stock_prices",
+    "commodity_prices",
+    "weather",
+    "news",
+    "daily_market_data",
+]
 DEFAULT_CRON = "0 0 * * *"
 
 
-def get_fetcher() -> str:
-    return os.getenv("FETCHER", DEFAULT_FETCHER)
-
-
-def get_models() -> list[str]:
-    models_str = os.getenv("MODELS")
+def _get_models(env: str, default: list[str]) -> list[str]:
+    models_str = os.getenv(env)
     if models_str:
         return [m.strip() for m in models_str.split(",") if m.strip()]
-    return DEFAULT_MODELS
+    return default
+
 
 os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
 
 
-@op
-def fetch_data() -> bool:
-    """Fetch raw data using the configured fetcher."""
-    invoke_fetcher(get_fetcher())
-    return True
+def make_fetch_op(fetcher: str, name: str):
+    @op(name=name)
+    def _fetch_data() -> bool:
+        invoke_fetcher(fetcher)
+        return True
+
+    return _fetch_data
 
 
-@op(
-    config_schema={"models": Field(Noneable([str]), is_required=False, default_value=None)}
-)
-def run_dbt_pipeline(context, _start: bool) -> None:
-    """Run dbt for the configured models."""
-    models = context.op_config.get("models")
-    if models is None:
-        models = get_models()
-        context.log.info("Using default models: %s", models)
-    _run_dbt(["seed"])
-    if models:
-        _run_dbt(["run", "-s", *models])
-        _run_dbt(["test", "-s", *models])
-    else:
-        _run_dbt(["run"])
-        _run_dbt(["test"])
+def make_dbt_op(env_var: str, default_models: list[str], name: str):
+    @op(name=name, config_schema={"models": Field(Noneable([str]), is_required=False, default_value=None)})
+    def _run_dbt_pipeline(context, _start: bool) -> None:
+        models = context.op_config.get("models")
+        if models is None:
+            models = _get_models(env_var, default_models)
+            context.log.info("Using default models: %s", models)
+        _run_dbt(["seed"])
+        if models:
+            _run_dbt(["run", "-s", *models])
+            _run_dbt(["test", "-s", *models])
+        else:
+            _run_dbt(["run"])
+            _run_dbt(["test"])
+
+    return _run_dbt_pipeline
+
+
+basketball_fetch = make_fetch_op(BASKETBALL_FETCHER, "basketball_fetch")
+finance_fetch = make_fetch_op(FINANCE_FETCHER, "finance_fetch")
+
+basketball_dbt = make_dbt_op("BASKETBALL_MODELS", BASKETBALL_MODELS, "basketball_dbt")
+finance_dbt = make_dbt_op("FINANCE_MODELS", FINANCE_MODELS, "finance_dbt")
 
 
 @job
-def pipeline_job() -> None:
-    """Dagster job that fetches data and executes dbt."""
-    run_dbt_pipeline(fetch_data())
+def basketball_job() -> None:
+    """Pipeline for basketball related models."""
+    basketball_dbt(basketball_fetch())
+
+
+@job
+def finance_job() -> None:
+    """Pipeline for finance related models."""
+    finance_dbt(finance_fetch())
 
 def parse_cron(expr: str) -> str:
     mapping = {
@@ -78,10 +100,19 @@ def parse_cron(expr: str) -> str:
     return expr
 
 
-schedule = ScheduleDefinition(
-    job=pipeline_job,
-    cron_schedule=parse_cron(os.getenv("SCHEDULE", DEFAULT_CRON)),
-    name="pipeline_schedule",
+basketball_schedule = ScheduleDefinition(
+    job=basketball_job,
+    cron_schedule=parse_cron(os.getenv("BASKETBALL_SCHEDULE", DEFAULT_CRON)),
+    name="basketball_schedule",
 )
 
-defs = Definitions(jobs=[pipeline_job], schedules=[schedule])
+finance_schedule = ScheduleDefinition(
+    job=finance_job,
+    cron_schedule=parse_cron(os.getenv("FINANCE_SCHEDULE", DEFAULT_CRON)),
+    name="finance_schedule",
+)
+
+defs = Definitions(
+    jobs=[basketball_job, finance_job],
+    schedules=[basketball_schedule, finance_schedule],
+)

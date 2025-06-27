@@ -67,13 +67,13 @@ The typical workflow when extending the warehouse is:
    ``dbt seed`` loads the CSVs from ``dbt/seeds/external`` into ``data/warehouse.duckdb``.
 
 3. **Automate the pipeline**
-   - Configure the fetcher, dbt models and schedule using environment
+   - Configure schedules and models for each pipeline using environment
      variables. For example:
 
      ```bash
-    export FETCHER=sources.finance.fetch
-     export MODELS=player_stats,player_efficiency
-     export SCHEDULE=daily
+     export BASKETBALL_MODELS=player_stats,player_efficiency
+     export BASKETBALL_SCHEDULE=daily
+     export FINANCE_SCHEDULE=weekly
      ```
 
    - Start the stack and Dagster will execute the job automatically according
@@ -92,23 +92,20 @@ cd dbt && dbt seed && dbt run -s your_model && dbt test -s your_model
 
 ## Editing models
 
-Models live under `dbt/models`. Define the list of models to execute via the
-`MODELS` environment variable. The Dagster container runs these models on the
-configured schedule.
+Models live under `dbt/models`. Use `BASKETBALL_MODELS` or `FINANCE_MODELS`
+to override the default list for each pipeline. The Dagster container runs
+these models on their configured schedules.
 
 ### Manual runs
 
-You can launch the pipeline manually from Dagster's UI using the **Launchpad**.
-Provide a run configuration that specifies the fetcher and the dbt models to execute:
+You can launch each pipeline manually from Dagster's UI using the **Launchpad**.
+Provide a run configuration that specifies the dbt models to execute:
 
 ```yaml
 ops:
-  fetch_data:
+  finance_dbt:
     config:
-      fetcher: sources.finance.fetch
-  run_dbt_pipeline:
-    config:
-      models: [player_efficiency]
+      models: [daily_market_data]
 ```
 
 If no run configuration is supplied, the job falls back to the values provided
