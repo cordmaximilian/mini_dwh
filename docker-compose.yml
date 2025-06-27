@@ -31,6 +31,11 @@ services:
       SUPERSET_SECRET_KEY: superset-secret
       SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://superset:superset@superset_db:5432/superset
       REDIS_HOST: superset_cache
+      ADMIN_USERNAME: max
+      ADMIN_FIRSTNAME: Max
+      ADMIN_LASTNAME: Account
+      ADMIN_EMAIL: max@example.com
+      ADMIN_PASSWORD: admin
     ports:
       - "8080:8088"
 
