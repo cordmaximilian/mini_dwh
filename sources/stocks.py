@@ -1,16 +1,10 @@
 from datetime import datetime, timedelta
-from pathlib import Path
+from utils import external_seed_path
 
 import pandas as pd
 import yfinance as yf
 
-DATA_PATH = (
-    Path(__file__).resolve().parent.parent
-    / "dbt"
-    / "seeds"
-    / "external"
-    / "stock_prices.csv"
-)
+DATA_PATH = external_seed_path("stock_prices.csv")
 
 
 def fetch() -> None:

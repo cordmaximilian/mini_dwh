@@ -1,14 +1,8 @@
-from pathlib import Path
+from utils import external_seed_path
 import pandas as pd
 import requests
 
-DATA_PATH = (
-    Path(__file__).resolve().parent.parent
-    / "dbt"
-    / "seeds"
-    / "external"
-    / "world_bank_gdp.csv"
-)
+DATA_PATH = external_seed_path("world_bank_gdp.csv")
 
 
 def fetch() -> None:
