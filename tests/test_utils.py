@@ -33,6 +33,15 @@ except Exception:  # pragma: no cover - fallback stub
     sys.modules["duckdb"] = duckdb
 
 try:
+    import pandas as pd
+except Exception:  # pragma: no cover - fallback stub
+    pd = ModuleType("pandas")
+    pd.DataFrame = types.SimpleNamespace
+    pd.to_csv = lambda *a, **kw: None
+    pd.to_datetime = lambda x: x
+    sys.modules["pandas"] = pd
+
+try:
     import dagster
 except Exception:  # pragma: no cover - fallback stub
     dagster = ModuleType("dagster")

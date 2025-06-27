@@ -66,7 +66,13 @@ The typical workflow when extending the warehouse is:
 
    ``dbt seed`` loads the CSVs from ``dbt/seeds/external`` into ``data/warehouse.duckdb``.
 
-3. **Automate the pipeline**
+3. **Build trading recommendations**
+   - Implement Python models under `recommendations/` that read from
+     `data/warehouse.duckdb`.
+   - Run `run_recommendations.py` after dbt to produce a CSV of suggested
+     actions.
+
+4. **Automate the pipeline**
    - Configure schedules and models for each pipeline using environment
      variables. For example:
 
@@ -116,6 +122,8 @@ through environment variables.
 - `dagster_pipeline.py` – Dagster job reading environment variables.
 - `fetch_seeds.py` – simple script to download raw data into `dbt/seeds/external`.
 - `sources/` – Python modules for fetching raw data.
+- `recommendations/` – Python code producing trading suggestions.
+- `run_recommendations.py` – helper script running the models.
 - `dbt/` – dbt project containing models and configuration.
   - Raw CSV files are stored under `dbt/seeds/external`.
   - `sources/finance.py` downloads market data and news.

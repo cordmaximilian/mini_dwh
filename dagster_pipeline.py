@@ -1,6 +1,7 @@
 import os
 from dagster import Definitions, ScheduleDefinition, job, op, Field, Noneable
 from utils import DBT_DIR, _run_dbt, invoke_fetcher
+from recommendations import recommender
 
 BASKETBALL_FETCHER = "sources.basketball.fetch"
 FINANCE_FETCHER = "sources.finance.fetch"
@@ -69,6 +70,12 @@ basketball_dbt = make_dbt_op("BASKETBALL_MODELS", BASKETBALL_MODELS, "basketball
 finance_dbt = make_dbt_op("FINANCE_MODELS", FINANCE_MODELS, "finance_dbt")
 
 
+@op(name="generate_recommendations")
+def generate_recommendations() -> None:
+    """Run the trading bot recommendation model."""
+    recommender.generate()
+
+
 @job
 def basketball_job() -> None:
     """Pipeline for basketball related models."""
@@ -79,6 +86,12 @@ def basketball_job() -> None:
 def finance_job() -> None:
     """Pipeline for finance related models."""
     finance_dbt(finance_fetch())
+
+
+@job
+def recommendation_job() -> None:
+    """Generate trading bot recommendations."""
+    generate_recommendations()
 
 def parse_cron(expr: str) -> str:
     mapping = {
@@ -112,7 +125,13 @@ finance_schedule = ScheduleDefinition(
     name="finance_schedule",
 )
 
+recommendation_schedule = ScheduleDefinition(
+    job=recommendation_job,
+    cron_schedule=parse_cron(os.getenv("RECOMMENDATION_SCHEDULE", DEFAULT_CRON)),
+    name="recommendation_schedule",
+)
+
 defs = Definitions(
-    jobs=[basketball_job, finance_job],
-    schedules=[basketball_schedule, finance_schedule],
+    jobs=[basketball_job, finance_job, recommendation_job],
+    schedules=[basketball_schedule, finance_schedule, recommendation_schedule],
 )
