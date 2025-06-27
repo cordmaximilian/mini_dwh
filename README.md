@@ -19,15 +19,15 @@ dbt for transformations and Dagster for orchestration.
    docker compose up --build
    ```
 
-   Sample seed files are included under `dbt/seeds/external` so the docs and
-   Superset containers can start without fetching data. Run the fetcher scripts
-   described below to refresh these CSVs with real data.
+Sample seed files are included under `dbt/seeds/external` so the docs container
+can start without fetching data. Run the fetcher scripts described below to
+refresh these CSVs with real data.
 
 4. Access the running services:
 
    - Dagster UI: <http://localhost:3000>
    - dbt docs: <http://localhost:8081>
-   - Superset: <http://localhost:8080>
+   - Jupyter: <http://localhost:8888>
 
 The warehouse database is stored in `data/warehouse.duckdb`. Raw CSV files are
 stored locally under `dbt/seeds/external`. Open the database in
@@ -122,18 +122,14 @@ through environment variables.
   - Raw CSV files are stored under `dbt/seeds/external`.
   - `sources/basketball.py` downloads NBA season averages.
 
-## Data visualization with Superset
+## Data visualization with Jupyter
 
-Superset provides an intuitive interface for exploring your data. The service
-runs on <http://localhost:8080>. The compose file bootstraps an administrator
-account by executing ``superset fab create-admin`` when the container starts.
-By default the credentials are ``max`` / ``admin``. You can change them through
-the environment variables defined in ``docker-compose.yml``. After logging in
-you may change the password or add more users from Superset's
-**Settings → List Users** menu.
-
-CSV files and Superset assets are stored locally as part of the Docker volumes.
-
+This project ships with a Jupyter Notebook server for quick exploration. After
+starting the stack you can access the notebook interface on
+<http://localhost:8888>. Example notebooks live in the `notebooks/` directory
+and connect directly to `data/warehouse.duckdb` using the `duckdb` Python
+package. Feel free to create your own notebooks to analyze the transformed
+tables and visualize results using your favorite libraries.
 
 Start the stack with Docker, modify dbt models and watch the pipeline run!
 

@@ -7,3 +7,5 @@ dagster-webserver
 requests
 pandas
 pyyaml
+jupyter
+plotly
