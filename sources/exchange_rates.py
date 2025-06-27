@@ -1,16 +1,10 @@
 from datetime import datetime, timezone
-from pathlib import Path
+from utils import external_seed_path
 
 import pandas as pd
 import requests
 
-DATA_PATH = (
-    Path(__file__).resolve().parent.parent
-    / "dbt"
-    / "seeds"
-    / "external"
-    / "exchange_rates.csv"
-)
+DATA_PATH = external_seed_path("exchange_rates.csv")
 
 
 def fetch() -> None:

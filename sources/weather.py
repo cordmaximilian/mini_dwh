@@ -1,15 +1,9 @@
 from datetime import datetime, timedelta
-from pathlib import Path
+from utils import external_seed_path
 import pandas as pd
 import requests
 
-DATA_PATH = (
-    Path(__file__).resolve().parent.parent
-    / "dbt"
-    / "seeds"
-    / "external"
-    / "weather.csv"
-)
+DATA_PATH = external_seed_path("weather.csv")
 
 
 def fetch() -> None:

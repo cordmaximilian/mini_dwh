@@ -9,6 +9,11 @@ DBT_DIR = Path(__file__).parent / "dbt"
 CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
 
 
+def external_seed_path(filename: str) -> Path:
+    """Return the path to an external seed file in the dbt directory."""
+    return DBT_DIR / "seeds" / "external" / filename
+
+
 def _run_dbt(args: list[str]) -> None:
     """Execute a dbt command with a fallback to ``python -m dbt.cli.main``."""
     commands = [["dbt", *args], [sys.executable, "-m", "dbt.cli.main", *args]]
