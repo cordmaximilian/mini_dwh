@@ -2,8 +2,6 @@
 duckdb
 dbt-core
 dbt-duckdb
-pandas
-yfinance
 dagster
 dagster-webserver
 requests
