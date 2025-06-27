@@ -1,7 +1,7 @@
 import importlib
 import os
 from dagster import Definitions, ScheduleDefinition, job, op, Field, Noneable
-from utils import DBT_DIR, _run_dbt, load_config, active_models
+from utils import DBT_DIR, load_config, active_models, run_dbt_steps
 
 os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
 
@@ -39,13 +39,7 @@ def run_dbt_pipeline(context, _start: bool) -> None:
         cfg = load_config()
         models = list(active_models(cfg))
         context.log.info("Using active models from config: %s", models)
-    _run_dbt(["seed"])
-    if models:
-        _run_dbt(["run", "-s", *models])
-        _run_dbt(["test", "-s", *models])
-    else:
-        _run_dbt(["run"])
-        _run_dbt(["test"])
+    run_dbt_steps(models)
 
 
 @job

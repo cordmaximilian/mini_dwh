@@ -2,7 +2,7 @@
 import argparse
 import importlib
 
-from utils import _run_dbt, load_config, active_models
+from utils import load_config, active_models, run_dbt_steps
 
 
 
@@ -13,16 +13,6 @@ def fetch(fetcher: str) -> None:
     module = importlib.import_module(module_path)
     func = getattr(module, func_name)
     func()
-
-
-def run_dbt(models: list[str] | None) -> None:
-    _run_dbt(["seed"])
-    if models:
-        _run_dbt(["run", "-s", *models])
-        _run_dbt(["test", "-s", *models])
-    else:
-        _run_dbt(["run"])
-        _run_dbt(["test"])
 
 
 def main() -> None:
@@ -43,7 +33,7 @@ def main() -> None:
     models = args.models if args.models is not None else list(active_models(cfg))
 
     fetch(fetcher)
-    run_dbt(models)
+    run_dbt_steps(models)
 
 
 if __name__ == "__main__":

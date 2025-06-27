@@ -45,3 +45,14 @@ def load_config() -> dict:
 
 def active_models(cfg: dict) -> set[str]:
     return {m.get("name") for m in cfg.get("models", []) if m.get("active")}
+
+
+def run_dbt_steps(models: list[str] | None) -> None:
+    """Execute the seed, run and test dbt steps."""
+    _run_dbt(["seed"])
+    if models:
+        _run_dbt(["run", "-s", *models])
+        _run_dbt(["test", "-s", *models])
+    else:
+        _run_dbt(["run"])
+        _run_dbt(["test"])
