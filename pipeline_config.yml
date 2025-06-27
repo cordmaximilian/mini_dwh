@@ -7,7 +7,7 @@ models:
 sources:
   - name: basketball_stats
     fetcher: sources.basketball.fetch
-    schedule: "daily"
+    schedule: "0 0 * * *"
     models:
       - player_stats
       - player_efficiency

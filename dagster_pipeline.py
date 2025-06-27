@@ -42,36 +42,17 @@ def pipeline_job() -> None:
     """Dagster job that fetches data and executes dbt."""
     run_dbt_pipeline(fetch_data())
 
-
-
-
-def parse_cron(expr: str) -> str:
-    s = str(expr).lower()
-    if s == "hourly":
-        return "0 * * * *"
-    if s == "daily":
-        return "0 0 * * *"
-    if s == "weekly":
-        return "0 0 * * 0"
-    if s.startswith("every"):
-        parts = s.split()
-        if len(parts) >= 3:
-            interval = int(parts[1])
-            unit = parts[2].rstrip("s")
-            if unit == "hour":
-                return f"0 */{interval} * * *"
-            if unit == "day":
-                return f"0 0 */{interval} * *"
-        raise ValueError(f"Invalid schedule format: {expr}")
-    hour, minute = map(int, s.split(":"))
-    return f"{minute} {hour} * * *"
+DEFAULT_CRON = "0 0 * * *"
 
 
 def create_schedules():
     cfg = load_config()
     schedules: list[ScheduleDefinition] = []
     for source in cfg.get("sources", []):
-        cron = parse_cron(source.get("schedule", "hourly"))
+        fetcher = source["fetcher"]
+        models = [m for m in source.get("models", []) if m in active]
+        cron = source.get("schedule", DEFAULT_CRON)
+
         schedules.append(
             ScheduleDefinition(
                 job=pipeline_job,
