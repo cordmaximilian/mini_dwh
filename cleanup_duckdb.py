@@ -5,7 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 import duckdb
 
-DBT_DIR = Path(__file__).parent / "dbt"
+from utils import DBT_DIR
+
 DB_PATH = Path(__file__).parent / "data" / "warehouse.duckdb"
 
 
