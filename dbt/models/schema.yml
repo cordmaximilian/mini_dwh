@@ -10,3 +10,21 @@ models:
       - name: efficiency
         tests:
           - not_null
+  - name: stg_players
+    description: Raw player information from the balldontlie API.
+  - name: stg_teams
+    description: Raw team information from the balldontlie API.
+  - name: stg_games
+    description: Raw game information from the balldontlie API.
+  - name: stg_game_stats
+    description: Player game statistics from the balldontlie API.
+  - name: players
+    description: Cleaned player dimension.
+  - name: teams
+    description: Cleaned team dimension.
+  - name: games
+    description: Cleaned games dimension.
+  - name: game_stats
+    description: Fact table with basic player statistics per game.
+  - name: player_game_facts
+    description: Denormalized view joining players, teams and games.

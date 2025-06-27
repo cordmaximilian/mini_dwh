@@ -145,15 +145,15 @@ def test_cleanup_removes_unused_tables(tmp_path, monkeypatch):
 
 
 def test_basketball_fetch(monkeypatch, tmp_path):
-    calls = {}
+    calls = {"params": [], "paths": []}
 
     # stub pandas before importing the module
     class DummyDF:
         def __init__(self, records):
-            calls["records"] = records
+            calls.setdefault("records", []).append(records)
 
         def to_csv(self, path, index=False):
-            calls["path"] = str(path)
+            calls["paths"].append(str(path))
 
     dummy_pandas = ModuleType("pandas")
     dummy_pandas.DataFrame = types.SimpleNamespace(
@@ -176,13 +176,17 @@ def test_basketball_fetch(monkeypatch, tmp_path):
             pass
 
     def fake_get(url, params=None, timeout=30):
-        calls["params"] = params
+        calls["params"].append(params or {})
         return DummyResp()
 
     monkeypatch.setattr(bb, "requests", types.SimpleNamespace(get=fake_get))
-    monkeypatch.setattr(bb, "DATA_PATH", tmp_path / "out.csv")
+    monkeypatch.setattr(bb, "SEASON_AVERAGES_PATH", tmp_path / "avg.csv")
+    monkeypatch.setattr(bb, "PLAYERS_PATH", tmp_path / "players.csv")
+    monkeypatch.setattr(bb, "TEAMS_PATH", tmp_path / "teams.csv")
+    monkeypatch.setattr(bb, "GAMES_PATH", tmp_path / "games.csv")
+    monkeypatch.setattr(bb, "GAME_STATS_PATH", tmp_path / "stats.csv")
 
-    bb.fetch(max_player_id=2)
+    bb.fetch(max_player_id=2, pages=1)
 
-    assert calls["params"]["player_ids[]"] == [1, 2]
-    assert calls["path"].endswith("out.csv")
+    assert any(p.get("player_ids[]") == [1, 2] for p in calls["params"])
+    assert any(str(p).endswith("avg.csv") for p in calls["paths"])

@@ -34,10 +34,11 @@ stored locally under `dbt/seeds/external`. Open the database in
 [DBeaver](https://dbeaver.io/) to explore tables created by dbt. Models are
 grouped into `bronze`, `silver` and `gold` schemas rather than having the stage
 as part of the table name. Several sample
-The example pipeline now focuses on basketball statistics. A single fetcher
-downloads NBA season averages from the free `balldontlie` API and stores them
-as CSV files. dbt models calculate per player metrics such as an efficiency
-score derived from those season averages.
+The example pipeline now focuses on basketball statistics. The fetcher
+downloads player, team and game data from the free `balldontlie` API and stores
+them as CSV files. dbt models build a star schema with player and team
+dimensions plus game level facts. Additional models calculate metrics like
+player efficiency for richer analysis.
 
 ## Development workflow
 
