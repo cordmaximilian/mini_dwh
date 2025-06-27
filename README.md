@@ -136,10 +136,12 @@ If no run configuration is supplied, the job falls back to the values defined in
 ## Data visualization with Superset
 
 Superset provides an intuitive interface for exploring your data. The service
- runs on <http://localhost:8080>. The container creates an initial administrator
- account for you. Log in using ``max`` / ``admin`` and start exploring the
- warehouse. You can change the password or create additional users from
-  Superset's **Settings → List Users** menu.
+runs on <http://localhost:8080>. The compose file bootstraps an administrator
+account by executing ``superset fab create-admin`` when the container starts.
+By default the credentials are ``max`` / ``admin``. You can change them through
+the environment variables defined in ``docker-compose.yml``. After logging in
+you may change the password or add more users from Superset's
+**Settings → List Users** menu.
 
 CSV files and Superset assets are stored locally as part of the Docker volumes.
 
