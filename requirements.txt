@@ -7,4 +7,3 @@ yfinance
 dagster
 dagster-webserver
 requests
-boto3

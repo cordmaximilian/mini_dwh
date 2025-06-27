@@ -30,8 +30,7 @@ dbt for transformations and Dagster for orchestration.
    - Superset: <http://localhost:8080>
 
 The warehouse database is stored in `data/warehouse.duckdb`. Raw CSV files are
-uploaded to a Minio S3 bucket named `warehouse`. When AWS credentials are not
-configured the upload step is skipped and the CSVs remain locally. Open the database in
+stored locally under `dbt/seeds/external`. Open the database in
 [DBeaver](https://dbeaver.io/) to explore tables created by dbt. Models are
 grouped into `bronze`, `silver` and `gold` schemas rather than having the stage
 as part of the table name. Several sample
@@ -65,8 +64,7 @@ The typical workflow when extending the warehouse is:
     dbt test -s your_model
     ```
 
-   ``dbt seed`` first downloads the latest CSVs from the Minio bucket and then
-   loads them into ``data/warehouse.duckdb``.
+   ``dbt seed`` loads the CSVs from ``dbt/seeds/external`` into ``data/warehouse.duckdb``.
 
 3. **Automate the pipeline**
    - Register active models using `register_model.py` and edit
@@ -143,9 +141,7 @@ administrator account. Log in using ``admin`` / ``admin`` and start exploring
 the warehouse. You can change the password or create additional users from
 Superset's **Settings → List Users** menu.
 
-CSV files and Superset assets are stored in a Minio object store included in the
-Docker stack. Access the Minio console at <http://localhost:9001> using
-``minio`` / ``minio123``.
+CSV files and Superset assets are stored locally as part of the Docker volumes.
 
 
 Start the stack with Docker, modify dbt models and watch the pipeline run!
