@@ -159,3 +159,13 @@ suite using `pytest`:
 poetry install --with dev
 poetry run pytest -q
 ```
+
+## Connecting to Alpaca
+
+Trading bots can access the Alpaca API using the helper in `bots/alpaca.py`. Set the following environment variables so the client can authenticate:
+
+- `ALPACA_API_KEY` – your Alpaca API key
+- `ALPACA_SECRET_KEY` – your Alpaca secret
+- `ALPACA_BASE_URL` – optional base URL, defaults to `https://paper-api.alpaca.markets`
+
+Create a session by calling `bots.alpaca.get_session()` which returns a configured `requests.Session` ready to make authenticated requests.
