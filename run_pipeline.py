@@ -2,10 +2,7 @@
 import argparse
 import importlib
 
-import yaml
-
-
-from utils import DBT_DIR, _run_dbt, load_config, active_models
+from utils import _run_dbt, load_config, active_models
 
 
 

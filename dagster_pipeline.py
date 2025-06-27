@@ -1,14 +1,7 @@
 import importlib
 import os
-import subprocess
-import sys
-from pathlib import Path
-
-
-import yaml
-
-
 from dagster import Definitions, ScheduleDefinition, job, op, Field, Noneable
+from utils import DBT_DIR, _run_dbt, load_config, active_models
 
 os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
 
