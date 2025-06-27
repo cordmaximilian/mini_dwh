@@ -12,8 +12,6 @@ dagster = "*"
 dagster-webserver = "*"
 dbt-core = "*"
 dbt-duckdb = "*"
-pandas = "*"
-yfinance = "*"
 requests = "*"
 pyyaml = "*"
 
