@@ -13,6 +13,7 @@ dagster-webserver = "*"
 dbt-core = "*"
 dbt-duckdb = "*"
 requests = "*"
+pandas = "*"
 pyyaml = "*"
 
 [tool.poetry.group.dev.dependencies]

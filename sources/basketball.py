@@ -1,4 +1,4 @@
-import csv
+import pandas as pd
 import requests
 from utils import external_seed_path
 
@@ -25,10 +25,8 @@ def fetch(season: int = 2022, max_player_id: int = 100, batch_size: int = 25) ->
     if not records:
         return
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(DATA_PATH, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=sorted(records[0].keys()))
-        writer.writeheader()
-        writer.writerows(records)
+    df = pd.DataFrame.from_records(records)
+    df.to_csv(DATA_PATH, index=False)
 
 
 if __name__ == "__main__":

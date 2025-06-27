@@ -5,4 +5,5 @@ dbt-duckdb
 dagster
 dagster-webserver
 requests
+pandas
 pyyaml
