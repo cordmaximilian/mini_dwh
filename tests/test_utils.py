@@ -181,7 +181,7 @@ def test_basketball_fetch(monkeypatch, tmp_path):
 
     monkeypatch.setattr(bb, "requests", types.SimpleNamespace(get=fake_get))
     monkeypatch.setattr(bb, "SEASON_AVERAGES_PATH", tmp_path / "avg.csv")
-    monkeypatch.setattr(bb, "PLAYERS_PATH", tmp_path / "players.csv")
+    monkeypatch.setattr(bb, "PLAYERS_PATH", tmp_path / "raw_players.csv")
     monkeypatch.setattr(bb, "TEAMS_PATH", tmp_path / "teams.csv")
     monkeypatch.setattr(bb, "GAMES_PATH", tmp_path / "games.csv")
     monkeypatch.setattr(bb, "GAME_STATS_PATH", tmp_path / "stats.csv")
