@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from pathlib import Path
+import importlib
 import subprocess
 import sys
-import yaml
 
 DBT_DIR = Path(__file__).parent / "dbt"
-CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
 
 
 def external_seed_path(filename: str) -> Path:
@@ -38,7 +37,14 @@ def _run_dbt(args: list[str]) -> None:
         raise last_error
 
 
-def load_config() -> dict:
-    with open(CONFIG_FILE) as f:
-        return yaml.safe_load(f) or {}
+def invoke_fetcher(path: str) -> None:
+    """Import and run the ``fetch`` function referenced by ``path``."""
+    if "." not in path:
+        raise ValueError("Expected '<module>.<function>'")
+    module_name, func_name = path.rsplit(".", 1)
+    module = importlib.import_module(module_name)
+    fetcher = getattr(module, func_name, None)
+    if not callable(fetcher):
+        raise ValueError(f"Invalid fetcher: {path}")
+    fetcher()
 

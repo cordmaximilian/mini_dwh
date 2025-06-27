@@ -73,15 +73,13 @@ except Exception:  # pragma: no cover - fallback stub
 
 import pytest
 import utils
-import register_model
 import run_pipeline
 import cleanup_duckdb
 
 
 
-def test_parse_cron(monkeypatch):
+def test_parse_cron():
     import importlib
-    monkeypatch.setattr(utils, "load_config", lambda: {})
     dagster_pipeline = importlib.import_module("dagster_pipeline")
     assert dagster_pipeline.parse_cron("hourly") == "0 * * * *"
     assert dagster_pipeline.parse_cron("daily") == "0 0 * * *"
@@ -91,9 +89,6 @@ def test_parse_cron(monkeypatch):
     assert dagster_pipeline.parse_cron("14:30") == "30 14 * * *"
 
 
-def test_active_models():
-    cfg = {"models": [{"name": "a", "active": True}, {"name": "b", "active": False}]}
-    assert utils.active_models(cfg) == {"a"}
 
 
 def test_invoke_fetcher_invalid():
@@ -135,20 +130,6 @@ def test_fetch_calls_invoke_fetcher():
     with patch("run_pipeline.invoke_fetcher") as inv:
         run_pipeline.fetch("mod.func")
         inv.assert_called_with("mod.func")
-
-
-def test_set_model_state(tmp_path, monkeypatch):
-    cfg_file = tmp_path / "cfg.yml"
-    cfg_file.write_text(yaml.safe_dump({"models": [{"name": "a", "active": True}]}))
-    monkeypatch.setattr(register_model, "CONFIG_FILE", cfg_file)
-    register_model.set_model_state("a", False)
-    data = yaml.safe_load(cfg_file.read_text())
-    assert data["models"][0]["active"] is False
-    register_model.set_model_state("b", True)
-    data = yaml.safe_load(cfg_file.read_text())
-    names = {m["name"] for m in data["models"]}
-    assert names == {"a", "b"}
-
 
 def test_cleanup_removes_unused_tables(tmp_path, monkeypatch):
     db_path = tmp_path / "test.duckdb"
