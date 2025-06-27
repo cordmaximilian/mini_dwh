@@ -17,7 +17,9 @@ def _run_dbt(args: list[str]) -> None:
     """Execute a dbt command with a fallback to ``python -m dbt``.
 
     Raises ``RuntimeError`` if the command fails or dbt is not installed."""
-    commands = [["dbt", *args], [sys.executable, "-m", "dbt", *args]]
+    # ``python -m dbt`` fails when a local ``dbt`` folder shadows the installed
+    # package. Invoke the CLI's main module instead to avoid this issue.
+    commands = [["dbt", *args], [sys.executable, "-m", "dbt.cli.main", *args]]
     last_error: Exception | None = None
     for cmd in commands:
         try:
