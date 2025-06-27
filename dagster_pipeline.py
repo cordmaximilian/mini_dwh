@@ -1,7 +1,6 @@
-import importlib
 import os
 from dagster import Definitions, ScheduleDefinition, job, op, Field, Noneable
-from utils import DBT_DIR, _run_dbt, load_config, active_models
+from utils import DBT_DIR, _run_dbt, load_config, active_models, invoke_fetcher
 
 os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
 
@@ -18,14 +17,14 @@ def fetch_data(context) -> bool:
             raise ValueError("No sources configured in pipeline_config.yml")
         fetcher = cfg["sources"][0]["fetcher"]
         context.log.info("Using default fetcher '%s'", fetcher)
-    if "." not in fetcher:
-        raise ValueError(
-            f"Invalid fetcher '{fetcher}'. Expected dotted path like 'module.func'"
-        )
-    module_path, func_name = fetcher.rsplit(".", 1)
-    module = importlib.import_module(module_path)
-    func = getattr(module, func_name)
-    func()
+    try:
+        invoke_fetcher(fetcher)
+    except ValueError as exc:
+        if str(exc) == f"Invalid fetcher '{fetcher}'. Expected 'module.func'":
+            raise ValueError(
+                f"Invalid fetcher '{fetcher}'. Expected dotted path like 'module.func'"
+            ) from exc
+        raise
     return True
 
 
