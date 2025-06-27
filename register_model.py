@@ -4,10 +4,8 @@ from __future__ import annotations
 
 import argparse
 import yaml
-from pathlib import Path
 
-
-CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
+from utils import CONFIG_FILE
 
 
 def load_config() -> dict:
