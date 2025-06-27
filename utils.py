@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import subprocess
 import sys
+import importlib
 import yaml
 
 DBT_DIR = Path(__file__).parent / "dbt"
@@ -45,3 +46,13 @@ def load_config() -> dict:
 
 def active_models(cfg: dict) -> set[str]:
     return {m.get("name") for m in cfg.get("models", []) if m.get("active")}
+
+
+def invoke_fetcher(path: str) -> None:
+    """Import and execute a fetcher given by dotted path."""
+    if "." not in path:
+        raise ValueError(f"Invalid fetcher '{path}'. Expected 'module.func'")
+    module_path, func_name = path.rsplit(".", 1)
+    module = importlib.import_module(module_path)
+    func = getattr(module, func_name)
+    func()

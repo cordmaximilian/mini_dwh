@@ -1,18 +1,11 @@
 """Run a single pipeline execution without Dagster."""
 import argparse
-import importlib
-
-from utils import _run_dbt, load_config, active_models
+from utils import _run_dbt, load_config, active_models, invoke_fetcher
 
 
 
 def fetch(fetcher: str) -> None:
-    if "." not in fetcher:
-        raise ValueError(f"Invalid fetcher '{fetcher}'. Expected 'module.func'")
-    module_path, func_name = fetcher.rsplit(".", 1)
-    module = importlib.import_module(module_path)
-    func = getattr(module, func_name)
-    func()
+    invoke_fetcher(fetcher)
 
 
 def run_dbt(models: list[str] | None) -> None:
