@@ -3,7 +3,15 @@ from dagster import Definitions, ScheduleDefinition, job, op, Field, Noneable
 from utils import DBT_DIR, _run_dbt, invoke_fetcher
 
 DEFAULT_FETCHER = "sources.basketball.fetch"
-DEFAULT_MODELS = ["player_stats", "player_efficiency"]
+DEFAULT_MODELS = [
+    "player_stats",
+    "players",
+    "teams",
+    "games",
+    "game_stats",
+    "player_efficiency",
+    "player_game_facts",
+]
 DEFAULT_CRON = "0 0 * * *"
 
 
