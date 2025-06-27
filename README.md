@@ -65,15 +65,18 @@ The typical workflow when extending the warehouse is:
    ``dbt seed`` loads the CSVs from ``dbt/seeds/external`` into ``data/warehouse.duckdb``.
 
 3. **Automate the pipeline**
-   - Register active models using `register_model.py` and edit
-     `pipeline_config.yml` to add the fetcher, desired models and schedule.
+   - Set the environment variables `FETCHER`, `MODELS` and optionally `SCHEDULE`
+     to control the source, which dbt models run and how often the job should
+     execute. For example:
 
      ```bash
-     poetry run python register_model.py your_model --activate
+     export FETCHER=sources.basketball.fetch
+     export MODELS=player_stats,player_efficiency
+     export SCHEDULE=daily
      ```
 
    - Start the stack and Dagster will execute the job automatically according
-     to the configured schedules:
+     to the configured schedule:
 
      ```bash
      docker compose up
@@ -88,16 +91,9 @@ cd dbt && dbt seed && dbt run -s your_model && dbt test -s your_model
 
 ## Editing models
 
-Models live under `dbt/models`. Update `pipeline_config.yml` to control
-which models are executed. The Dagster container schedules and runs the active
-models automatically.
-
-Toggle a model state with:
-
-
-```bash
-poetry run python register_model.py <model_name> --activate   # or --deactivate
-```
+Models live under `dbt/models`. Set the `MODELS` environment variable with a
+comma-separated list of model names to control which ones are executed. When no
+value is provided the defaults defined in `dagster_pipeline.py` are used.
 
 ### Manual runs
 
@@ -114,12 +110,12 @@ ops:
       models: [player_efficiency]
 ```
 
-If no run configuration is supplied, the job falls back to the values defined in
-`pipeline_config.yml`.
+If no run configuration is supplied, the job falls back to the values provided
+through the `FETCHER` and `MODELS` environment variables.
 
 ## Repository overview
 
-- `dagster_pipeline.py` – Dagster job reading `pipeline_config.yml`.
+- `dagster_pipeline.py` – Dagster job reading environment variables.
 - `fetch_seeds.py` – simple script to download raw data into `dbt/seeds/external`.
 - `sources/` – Python modules for fetching raw data.
 - `dbt/` – dbt project containing models and configuration.

@@ -4,10 +4,8 @@ from pathlib import Path
 import subprocess
 import sys
 import importlib
-import yaml
 
 DBT_DIR = Path(__file__).parent / "dbt"
-CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
 
 
 def external_seed_path(filename: str) -> Path:
@@ -37,15 +35,6 @@ def _run_dbt(args: list[str]) -> None:
         )
     if last_error:
         raise last_error
-
-
-def load_config() -> dict:
-    with open(CONFIG_FILE) as f:
-        return yaml.safe_load(f) or {}
-
-
-def active_models(cfg: dict) -> set[str]:
-    return {m.get("name") for m in cfg.get("models", []) if m.get("active")}
 
 
 def invoke_fetcher(path: str) -> None:

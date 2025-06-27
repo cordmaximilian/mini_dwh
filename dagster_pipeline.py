@@ -1,8 +1,12 @@
 import os
 from dagster import Definitions, ScheduleDefinition, job, op, Field, Noneable
-from utils import DBT_DIR, _run_dbt, load_config, active_models, invoke_fetcher
+from utils import DBT_DIR, _run_dbt, invoke_fetcher
 
 os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
+
+
+DEFAULT_FETCHER = "sources.basketball.fetch"
+DEFAULT_MODELS = ["player_stats", "player_efficiency"]
 
 
 @op(
@@ -12,11 +16,8 @@ def fetch_data(context) -> bool:
     """Import and execute the configured fetch function."""
     fetcher = context.op_config.get("fetcher")
     if not fetcher:
-        cfg = load_config()
-        if not cfg.get("sources"):
-            raise ValueError("No sources configured in pipeline_config.yml")
-        fetcher = cfg["sources"][0]["fetcher"]
-        context.log.info("Using default fetcher '%s'", fetcher)
+        fetcher = os.environ.get("FETCHER", DEFAULT_FETCHER)
+        context.log.info("Using fetcher '%s'", fetcher)
     try:
         invoke_fetcher(fetcher)
     except ValueError as exc:
@@ -35,9 +36,12 @@ def run_dbt_pipeline(context, _start: bool) -> None:
     """Run dbt for the configured models."""
     models = context.op_config.get("models")
     if models is None:
-        cfg = load_config()
-        models = list(active_models(cfg))
-        context.log.info("Using active models from config: %s", models)
+        env_models = os.environ.get("MODELS")
+        if env_models:
+            models = [m.strip() for m in env_models.split(",") if m.strip()]
+        else:
+            models = DEFAULT_MODELS
+        context.log.info("Using models: %s", models)
     _run_dbt(["seed"])
     if models:
         _run_dbt(["run", "-s", *models])
@@ -77,28 +81,11 @@ def parse_cron(expr: str) -> str:
     return f"{minute} {hour} * * *"
 
 
-def create_schedules():
-    cfg = load_config()
-    active = active_models(cfg)
-    schedules: list[ScheduleDefinition] = []
-    for source in cfg.get("sources", []):
-        fetcher = source["fetcher"]
-        models = [m for m in source.get("models", []) if m in active]
-        cron = parse_cron(source.get("schedule", "hourly"))
-        schedules.append(
-            ScheduleDefinition(
-                job=pipeline_job,
-                cron_schedule=cron,
-                name=f"{source.get('name', 'source')}_schedule",
-                run_config={
-                    "ops": {
-                        "fetch_data": {"config": {"fetcher": fetcher}},
-                        "run_dbt_pipeline": {"config": {"models": models}},
-                    }
-                },
-            )
-        )
-    return schedules
+schedule = ScheduleDefinition(
+    job=pipeline_job,
+    cron_schedule=parse_cron(os.environ.get("SCHEDULE", "daily")),
+    name="pipeline_schedule",
+)
 
 
-defs = Definitions(jobs=[pipeline_job], schedules=create_schedules())
+defs = Definitions(jobs=[pipeline_job], schedules=[schedule])
