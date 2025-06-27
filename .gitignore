@@ -8,3 +8,4 @@ data/*.duckdb
 
 # DBT
 dbt/target/
+.ipynb_checkpoints/

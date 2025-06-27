@@ -10,42 +10,16 @@ services:
     environment:
       DBT_PROFILES_DIR: /app/dbt
 
-  superset_db:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: superset
-      POSTGRES_PASSWORD: superset
-      POSTGRES_DB: superset
-    volumes:
-      - superset_db:/var/lib/postgresql/data
-
-  superset_cache:
-    image: redis:latest
-
-  superset:
-    image: apache/superset:latest
-    depends_on:
-      - superset_db
-      - superset_cache
-    environment:
-      SUPERSET_SECRET_KEY: superset-secret
-      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://superset:superset@superset_db:5432/superset
-      REDIS_HOST: superset_cache
-      SUPERSET_CONFIG_PATH: /app/pythonpath/superset_config.py
-      ADMIN_USERNAME: max
-      ADMIN_FIRSTNAME: Max
-      ADMIN_LASTNAME: Account
-      ADMIN_EMAIL: max@example.com
-      ADMIN_PASSWORD: admin
+  jupyter:
+    build: .
     command: >-
-      /bin/bash -c "superset db upgrade &&
-      superset fab create-admin --username $ADMIN_USERNAME --firstname $ADMIN_FIRSTNAME
-      --lastname $ADMIN_LASTNAME --email $ADMIN_EMAIL --password $ADMIN_PASSWORD &&
-      superset init && superset run -h 0.0.0.0 -p 8088"
-    ports:
-      - "8080:8088"
+      jupyter notebook --ip 0.0.0.0 --port 8888 --no-browser \
+      --NotebookApp.token='' --NotebookApp.password=''
     volumes:
-      - ./superset_config.py:/app/pythonpath/superset_config.py
+      - ./data:/app/data
+      - ./notebooks:/app/notebooks
+    ports:
+      - "8888:8888"
 
   docs:
     build: .
@@ -59,6 +33,3 @@ services:
     environment:
       DBT_PROFILES_DIR: /app/dbt
 
-volumes:
-  superset_db:
-  superset_cache:
