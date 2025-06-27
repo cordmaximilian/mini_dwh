@@ -7,3 +7,4 @@ yfinance
 dagster
 dagster-webserver
 requests
+pyyaml
