@@ -1,0 +1,3 @@
+AUTH_TYPE = 1
+AUTH_ROLE_PUBLIC = 'Admin'
+PUBLIC_ROLE_LIKE = 'Admin'
