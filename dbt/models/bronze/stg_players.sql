@@ -1,1 +1,1 @@
-select * from {{ ref('players') }}
+select * from {{ ref('raw_players') }}

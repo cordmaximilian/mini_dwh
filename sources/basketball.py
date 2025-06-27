@@ -6,7 +6,7 @@ from pathlib import Path
 from utils import external_seed_path
 
 SEASON_AVERAGES_PATH = external_seed_path("season_averages.csv")
-PLAYERS_PATH = external_seed_path("players.csv")
+PLAYERS_PATH = external_seed_path("raw_players.csv")
 TEAMS_PATH = external_seed_path("teams.csv")
 GAMES_PATH = external_seed_path("games.csv")
 GAME_STATS_PATH = external_seed_path("game_stats.csv")
