@@ -28,3 +28,21 @@ models:
     description: Fact table with basic player statistics per game.
   - name: player_game_facts
     description: Denormalized view joining players, teams and games.
+  - name: stg_stock_prices
+    description: Raw historical stock prices fetched from Yahoo! Finance.
+  - name: stg_commodity_prices
+    description: Raw commodity prices from Yahoo! Finance.
+  - name: stg_weather
+    description: Daily weather measurements.
+  - name: stg_news
+    description: News headlines with publication dates.
+  - name: stock_prices
+    description: Cleaned daily closing prices for stocks.
+  - name: commodity_prices
+    description: Cleaned daily commodity prices.
+  - name: weather
+    description: Cleaned weather data.
+  - name: news
+    description: News articles by date.
+  - name: daily_market_data
+    description: Combined view of prices, weather and news by date.

@@ -17,6 +17,9 @@ pandas = "*"
 pyyaml = "*"
 jupyter = "*"
 plotly = "*"
+yfinance = "*"
+meteostat = "*"
+newsapi-python = "*"
 
 [tool.poetry.group.dev.dependencies]
 # Add dev dependencies here
