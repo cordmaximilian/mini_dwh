@@ -1,7 +1,13 @@
 import importlib
 import os
-from s3_utils import download_seeds
-from utils import DBT_DIR, _run_dbt, load_config, active_models
+import subprocess
+import sys
+from pathlib import Path
+
+
+import yaml
+
+
 from dagster import Definitions, ScheduleDefinition, job, op, Field, Noneable
 
 os.environ.setdefault("DBT_PROFILES_DIR", str(DBT_DIR))
@@ -40,7 +46,6 @@ def run_dbt_pipeline(context, _start: bool) -> None:
         cfg = load_config()
         models = list(active_models(cfg))
         context.log.info("Using active models from config: %s", models)
-    download_seeds(DBT_DIR / "seeds" / "external")
     _run_dbt(["seed"])
     if models:
         _run_dbt(["run", "-s", *models])

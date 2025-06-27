@@ -15,7 +15,6 @@ dbt-duckdb = "*"
 pandas = "*"
 yfinance = "*"
 requests = "*"
-boto3 = "*"
 
 [tool.poetry.group.dev.dependencies]
 # Add dev dependencies here

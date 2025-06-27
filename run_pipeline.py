@@ -2,7 +2,8 @@
 import argparse
 import importlib
 
-from s3_utils import download_seeds
+import yaml
+
 
 from utils import DBT_DIR, _run_dbt, load_config, active_models
 
@@ -18,7 +19,6 @@ def fetch(fetcher: str) -> None:
 
 
 def run_dbt(models: list[str] | None) -> None:
-    download_seeds(DBT_DIR / "seeds" / "external")
     _run_dbt(["seed"])
     if models:
         _run_dbt(["run", "-s", *models])
