@@ -34,12 +34,10 @@ stored locally under `dbt/seeds/external`. Open the database in
 [DBeaver](https://dbeaver.io/) to explore tables created by dbt. Models are
 grouped into `bronze`, `silver` and `gold` schemas rather than having the stage
 as part of the table name. Several sample
-sources are included: hourly commodity prices from Yahoo Finance and hourly
-weather data from the Open‑Meteo API. Additional fetchers provide stock prices,
-currency exchange rates, short‑term weather forecasts and GDP figures from the
-World Bank. Commodity prices cover wheat, corn, soybeans, crude oil and a
-placeholder fertilizer index. The `wheat_weather` model joins the commodity and
-weather observations.
+The example pipeline now focuses on basketball statistics. A single fetcher
+downloads NBA season averages from the free `balldontlie` API and stores them
+as CSV files. dbt models calculate per player metrics such as an efficiency
+score derived from those season averages.
 
 ## Development workflow
 
@@ -84,7 +82,7 @@ The typical workflow when extending the warehouse is:
 For quick local iterations you can combine both steps using `run_pipeline.py`:
 
 ```bash
-poetry run python run_pipeline.py --fetcher sources.weather.fetch --models your_model
+poetry run python run_pipeline.py --fetcher sources.basketball.fetch --models your_model
 ```
 
 ## Editing models
@@ -109,10 +107,10 @@ Provide a run configuration that specifies the fetcher and the dbt models to exe
 ops:
   fetch_data:
     config:
-      fetcher: sources.commodities.fetch
+      fetcher: sources.basketball.fetch
   run_dbt_pipeline:
     config:
-      models: [wheat_weather]
+      models: [player_efficiency]
 ```
 
 If no run configuration is supplied, the job falls back to the values defined in
@@ -125,13 +123,7 @@ If no run configuration is supplied, the job falls back to the values defined in
 - `sources/` – Python modules for fetching raw data.
 - `dbt/` – dbt project containing models and configuration.
   - Raw CSV files are stored under `dbt/seeds/external`.
-  - `sources/commodities.py` downloads futures prices for wheat, corn,
-    soybeans, crude oil and a fertilizer index.
-  - `sources/weather.py` fetches hourly temperature observations.
-  - `sources/stocks.py` retrieves daily stock prices for a few tickers.
-  - `sources/exchange_rates.py` stores current USD exchange rates.
-- `sources/weather_forecast.py` downloads a 7‑day weather forecast.
-- `sources/world_bank.py` collects GDP data from the World Bank API.
+  - `sources/basketball.py` downloads NBA season averages.
 
 ## Data visualization with Superset
 
