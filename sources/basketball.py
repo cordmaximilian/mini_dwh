@@ -12,7 +12,7 @@ def fetch(season: int = 2022, max_player_id: int = 100, batch_size: int = 25) ->
 
     params = {
         "season": season,
-        "player_ids[]": list(range(1, max_players + 1)),
+        "player_ids[]": list(range(1, max_player_id + 1)),
     }
     try:
         resp = requests.get(API_URL, params=params, timeout=30)
