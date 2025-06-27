@@ -34,11 +34,12 @@ stored locally under `dbt/seeds/external`. Open the database in
 [DBeaver](https://dbeaver.io/) to explore tables created by dbt. Models are
 grouped into `bronze`, `silver` and `gold` schemas rather than having the stage
 as part of the table name. Several sample
-The example pipeline now focuses on basketball statistics. The fetcher
-downloads player, team and game data from the free `balldontlie` API and stores
-them as CSV files. dbt models build a star schema with player and team
-dimensions plus game level facts. Additional models calculate metrics like
-player efficiency for richer analysis.
+The example pipeline now focuses on financial market data. The fetcher
+downloads stock and commodity prices for a list of tickers using Yahoo! Finance,
+weather history from Meteostat and impactful news headlines via the NewsAPI. All
+data is stored as CSV files which dbt transforms into daily fact tables. These
+models can then be joined to analyze how markets react to external events such
+as weather changes or major news stories.
 
 ## Development workflow
 
@@ -70,7 +71,7 @@ The typical workflow when extending the warehouse is:
      variables. For example:
 
      ```bash
-     export FETCHER=sources.basketball.fetch
+    export FETCHER=sources.finance.fetch
      export MODELS=player_stats,player_efficiency
      export SCHEDULE=daily
      ```
@@ -104,7 +105,7 @@ Provide a run configuration that specifies the fetcher and the dbt models to exe
 ops:
   fetch_data:
     config:
-      fetcher: sources.basketball.fetch
+      fetcher: sources.finance.fetch
   run_dbt_pipeline:
     config:
       models: [player_efficiency]
@@ -120,7 +121,7 @@ through environment variables.
 - `sources/` – Python modules for fetching raw data.
 - `dbt/` – dbt project containing models and configuration.
   - Raw CSV files are stored under `dbt/seeds/external`.
-  - `sources/basketball.py` downloads NBA season averages.
+  - `sources/finance.py` downloads market data and news.
 
 ## Data visualization with Jupyter
 

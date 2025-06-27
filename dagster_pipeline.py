@@ -2,7 +2,7 @@ import os
 from dagster import Definitions, ScheduleDefinition, job, op, Field, Noneable
 from utils import DBT_DIR, _run_dbt, invoke_fetcher
 
-DEFAULT_FETCHER = "sources.basketball.fetch"
+DEFAULT_FETCHER = "sources.finance.fetch"
 DEFAULT_MODELS = [
     "player_stats",
     "players",
