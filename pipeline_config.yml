@@ -1,44 +1,13 @@
 models:
-  - name: wheat_weather
+  - name: player_stats
     active: true
-  - name: commodity_prices_daily
-    active: true
-  - name: daily_weather
-    active: true
-  - name: commodity_price_signals
-    active: true
-  - name: agri_buy_signals
+  - name: player_efficiency
     active: true
 
 sources:
-  - name: commodities
-    fetcher: sources.commodities.fetch
-    schedule: "hourly"
+  - name: basketball_stats
+    fetcher: sources.basketball.fetch
+    schedule: "daily"
     models:
-      - wheat_weather
-      - commodity_prices_daily
-      - commodity_price_signals
-      - agri_buy_signals
-  - name: weather
-    fetcher: sources.weather.fetch
-    schedule: "hourly"
-    models:
-      - wheat_weather
-      - daily_weather
-      - agri_buy_signals
-  - name: stocks
-    fetcher: sources.stocks.fetch
-    schedule: "daily"
-    models: []
-  - name: exchange_rates
-    fetcher: sources.exchange_rates.fetch
-    schedule: "daily"
-    models: []
-  - name: weather_forecast
-    fetcher: sources.weather_forecast.fetch
-    schedule: "daily"
-    models: []
-  - name: world_bank_gdp
-    fetcher: sources.world_bank.fetch
-    schedule: "daily"
-    models: []
+      - player_stats
+      - player_efficiency
