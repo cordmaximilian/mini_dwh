@@ -145,3 +145,14 @@ dbt model or seed:
 ```bash
 python cleanup_duckdb.py
 ```
+
+## Running tests
+
+Unit tests ensure the helper scripts behave correctly even without optional
+dependencies. Install development requirements with Poetry and execute the test
+suite using `pytest`:
+
+```bash
+poetry install --with dev
+poetry run pytest -q
+```
