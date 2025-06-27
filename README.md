@@ -45,10 +45,10 @@ The typical workflow when extending the warehouse is:
 
 1. **Pull raw data**
    - Implement a new module under `sources/` exposing a `fetch()` function.
-  - Run the fetcher directly to download data into `dbt/seeds/external`:
+   - Run `fetch_seeds.py` to download data into `dbt/seeds/external`:
 
      ```bash
-     poetry run python -m sources.your_source
+     poetry run python fetch_seeds.py
      ```
 
 2. **Transform with dbt**
@@ -79,10 +79,11 @@ The typical workflow when extending the warehouse is:
      docker compose up
      ```
 
-For quick local iterations you can combine both steps using `run_pipeline.py`:
+For quick local iterations run the fetcher and dbt commands manually:
 
 ```bash
-poetry run python run_pipeline.py --fetcher sources.basketball.fetch --models your_model
+poetry run python fetch_seeds.py
+cd dbt && dbt seed && dbt run -s your_model && dbt test -s your_model
 ```
 
 ## Editing models
@@ -119,7 +120,7 @@ If no run configuration is supplied, the job falls back to the values defined in
 ## Repository overview
 
 - `dagster_pipeline.py` – Dagster job reading `pipeline_config.yml`.
-- `run_pipeline.py` – helper script to fetch data and run dbt once.
+- `fetch_seeds.py` – simple script to download raw data into `dbt/seeds/external`.
 - `sources/` – Python modules for fetching raw data.
 - `dbt/` – dbt project containing models and configuration.
   - Raw CSV files are stored under `dbt/seeds/external`.
