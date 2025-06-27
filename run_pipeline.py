@@ -3,7 +3,9 @@ import argparse
 import importlib
 
 from s3_utils import download_seeds
+
 from utils import DBT_DIR, _run_dbt, load_config, active_models
+
 
 
 def fetch(fetcher: str) -> None:
