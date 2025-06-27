@@ -8,9 +8,13 @@ AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
 S3_BUCKET = os.environ.get("S3_BUCKET", "warehouse")
+HAS_CREDENTIALS = AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
 
 
 def _client():
+    """Return an S3 client if credentials are configured."""
+    if not HAS_CREDENTIALS:
+        return None
     return boto3.client(
         "s3",
         endpoint_url=S3_ENDPOINT,
@@ -22,7 +26,10 @@ def _client():
 
 
 def ensure_bucket(bucket: str = S3_BUCKET) -> None:
+    """Create the bucket if it does not exist."""
     client = _client()
+    if client is None:
+        return
     try:
         client.head_bucket(Bucket=bucket)
     except Exception:
@@ -31,6 +38,8 @@ def ensure_bucket(bucket: str = S3_BUCKET) -> None:
 
 def upload_seed(path: Path, bucket: str = S3_BUCKET) -> None:
     client = _client()
+    if client is None:
+        return
     ensure_bucket(bucket)
     key = f"seeds/{path.name}"
     client.upload_file(str(path), bucket, key)
@@ -39,6 +48,8 @@ def upload_seed(path: Path, bucket: str = S3_BUCKET) -> None:
 def download_seeds(dest: Path, bucket: str = S3_BUCKET) -> None:
     dest.mkdir(parents=True, exist_ok=True)
     client = _client()
+    if client is None:
+        return
     paginator = client.get_paginator("list_objects_v2")
     for page in paginator.paginate(Bucket=bucket, Prefix="seeds/"):
         for obj in page.get("Contents", []):

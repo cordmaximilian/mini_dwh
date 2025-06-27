@@ -30,7 +30,8 @@ dbt for transformations and Dagster for orchestration.
    - Superset: <http://localhost:8080>
 
 The warehouse database is stored in `data/warehouse.duckdb`. Raw CSV files are
-uploaded to a Minio S3 bucket named `warehouse`. Open the database in
+uploaded to a Minio S3 bucket named `warehouse`. When AWS credentials are not
+configured the upload step is skipped and the CSVs remain locally. Open the database in
 [DBeaver](https://dbeaver.io/) to explore tables created by dbt. Models are
 grouped into `bronze`, `silver` and `gold` schemas rather than having the stage
 as part of the table name. Several sample
