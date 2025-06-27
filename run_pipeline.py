@@ -1,11 +1,17 @@
 """Run a single pipeline execution without Dagster."""
 import argparse
-from utils import _run_dbt, load_config, active_models, invoke_fetcher
+from utils import _run_dbt
+from sources.basketball import fetch
 
 
 
-def fetch(fetcher: str) -> None:
-    invoke_fetcher(fetcher)
+MODELS = [
+    "player_stats",
+    "player_efficiency",
+]
+
+def fetch_data() -> None:
+    fetch()
 
 
 def run_dbt(models: list[str] | None) -> None:
@@ -20,22 +26,12 @@ def run_dbt(models: list[str] | None) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Execute pipeline once")
-    parser.add_argument("--fetcher", help="Dotted path to fetch function")
     parser.add_argument("--models", nargs="*", help="dbt models to run")
     args = parser.parse_args()
 
-    cfg = load_config()
+    models = args.models if args.models is not None else MODELS
 
-    fetcher = args.fetcher
-    if not fetcher:
-        if cfg.get("sources"):
-            fetcher = cfg["sources"][0]["fetcher"]
-        else:
-            parser.error("No fetcher specified and no sources in config")
-
-    models = args.models if args.models is not None else list(active_models(cfg))
-
-    fetch(fetcher)
+    fetch_data()
     run_dbt(models)
 
 
