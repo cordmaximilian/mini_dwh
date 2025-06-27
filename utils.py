@@ -10,8 +10,8 @@ CONFIG_FILE = Path(__file__).parent / "pipeline_config.yml"
 
 
 def _run_dbt(args: list[str]) -> None:
-    """Execute a dbt command with a fallback to ``python -m dbt``."""
-    commands = [["dbt", *args], [sys.executable, "-m", "dbt", *args]]
+    """Execute a dbt command with a fallback to ``python -m dbt.cli.main``."""
+    commands = [["dbt", *args], [sys.executable, "-m", "dbt.cli.main", *args]]
     last_error: Exception | None = None
     for cmd in commands:
         try:
