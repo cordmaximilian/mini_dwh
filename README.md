@@ -137,8 +137,10 @@ If no run configuration is supplied, the job falls back to the values defined in
 ## Data visualization with Superset
 
 Superset provides an intuitive interface for exploring your data. The service
-runs on <http://localhost:8080>. Create an account when prompted and start
-exploring the warehouse.
+runs on <http://localhost:8080>. The container ships with a default
+administrator account. Log in using ``admin`` / ``admin`` and start exploring
+the warehouse. You can change the password or create additional users from
+Superset's **Settings → List Users** menu.
 
 CSV files and Superset assets are stored in a Minio object store included in the
 Docker stack. Access the Minio console at <http://localhost:9001> using
