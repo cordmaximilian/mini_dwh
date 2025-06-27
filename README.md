@@ -66,7 +66,8 @@ The typical workflow when extending the warehouse is:
 
 3. **Automate the pipeline**
    - Register active models using `register_model.py` and edit
-     `pipeline_config.yml` to add the fetcher, desired models and schedule.
+     `pipeline_config.yml` to add the fetcher, desired models and a cron
+     schedule (e.g. `"0 0 * * *"`).
 
      ```bash
      poetry run python register_model.py your_model --activate
